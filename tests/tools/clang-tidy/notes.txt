@@ -1,0 +1,44 @@
+
+# - CLANG-TIDY - source code checker -
+
+# - clang tidy all checks -
+clang-tidy -checks='misc-*,google-*,modernize-*,performance-*,readability-*,cert-*,llvm-*,-llvm-header-guard,-misc-noexcept-move-constructor,-modernize-loop-convert' ../src/*.cc -header-filter='ccl.*' > check.log
+clang-tidy -checks='misc-*,google-*,modernize-*,performance-*,readability-*,cert-*,llvm-*,-llvm-header-guard,-misc-noexcept-move-constructor,-modernize-loop-convert' ../lib/*.cc -header-filter='ccl.*' > check.log
+clang-tidy -checks='misc-*,google-*,modernize-*,performance-*,readability-*,cert-*,llvm-*,-llvm-header-guard,-misc-noexcept-move-constructor,-modernize-loop-convert' ../tests/*.cc -header-filter='ccl.*' > check.log
+
+clang-tidy -checks='modernize-*' ../lib/*.cc -header-filter='ccl.*' > check.log
+clang-tidy -checks='misc-*' ../lib/*.cc -header-filter='ccl.*' > check.log
+clang-tidy -checks='performance-*' ../lib/*.cc -header-filter='ccl.*' > check.log
+clang-tidy -checks='readability-*' ../lib/*.cc -header-filter='ccl.*' > check.log
+clang-tidy -checks='google-*' ../lib/*.cc -header-filter='ccl.*' > check.log
+clang-tidy -checks='cert-*' ../lib/*.cc -header-filter='ccl.*' > check.log
+clang-tidy -checks='llvm-*,-llvm-header-guard' ../lib/*.cc -header-filter='ccl.*' > check.log
+
+boost-             Checks related to Boost library.
+cert-              Checks related to CERT Secure Coding Guidelines.
+cppcoreguidelines- Checks related to C++ Core Guidelines.
+clang-             analyzer- Clang Static Analyzer checks.
+google-            Checks related to the Google coding conventions.
+llvm-              Checks related to the LLVM coding conventions.
+misc-              Checks that we didn’t have a better category for.
+modernize-         Checks that advocate usage of modern (currently “modern” means “C++11”) language constructs.
+mpi-               Checks related to MPI (Message Passing Interface).
+performance-       Checks that target performance-related issues.
+readability-       Checks that target readability-related issues that don’t relate to any particular coding style.
+
+# - SCAN-BUILD - static analyzer -
+
+make clean
+scan-build cmake ..
+scan-build make
+
+# - DYNAMIC (runtime) checks -
+
+valgrind --tool=memcheck <program>
+valgrind --tool=cachegrind <program>
+valgrind --tool=massif <program>
+valgrind --tool=helgrind <program>
+
+valgrind --tool=callgrind --callgrind-out-file=call.out <program>
+kcachegrind call.out
+
