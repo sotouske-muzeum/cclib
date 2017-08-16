@@ -136,6 +136,69 @@ int loc_c::compare_value(const loc_c &a_loc) const
   }
 }/*}}}*/
 
+var_c var_c::copy() const
+{/*{{{*/
+  switch (m_loc_ptr->m_type)
+  {
+  case type_blank:
+  case type_bool:
+  case type_integer:
+  case type_float:
+  case type_string:
+    return *this;
+  case type_array:
+    {/*{{{*/
+      var_c res_value{array_t{}};
+
+      array_t &source = *static_cast<array_t *>(m_loc_ptr->m_data_ptr);
+      array_t &target = *static_cast<array_t *>(res_value.m_loc_ptr->m_data_ptr);
+
+      for (auto s_iter = source.begin();
+                s_iter != source.end();
+              ++s_iter)
+      {
+        target.push_back(s_iter->copy());
+      }
+
+      return res_value;
+    }/*}}}*/
+  case type_list:
+    {/*{{{*/
+      var_c res_value{list_t{}};
+
+      list_t &source = *static_cast<list_t *>(m_loc_ptr->m_data_ptr);
+      list_t &target = *static_cast<list_t *>(res_value.m_loc_ptr->m_data_ptr);
+
+      for (auto s_iter = source.begin();
+                s_iter != source.end();
+              ++s_iter)
+      {
+        target.push_back(s_iter->copy());
+      }
+
+      return res_value;
+    }/*}}}*/
+  case type_dict:
+    {/*{{{*/
+      var_c res_value{dict_t{}};
+
+      dict_t &source = *static_cast<dict_t *>(m_loc_ptr->m_data_ptr);
+      dict_t &target = *static_cast<dict_t *>(res_value.m_loc_ptr->m_data_ptr);
+
+      for (auto s_iter = source.begin();
+                s_iter != source.end();
+              ++s_iter)
+      {
+        target[s_iter->first.copy()] = s_iter->second.copy();
+      }
+
+      return res_value;
+    }/*}}}*/
+  default:
+    assert(false);
+  }
+}/*}}}*/
+
 var_c &loc_c::operator [] (int64_t a_idx) const
 {/*{{{*/
   switch (m_type)

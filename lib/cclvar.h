@@ -168,6 +168,7 @@ class var_c
 
   int type() const { return m_loc_ptr->type(); }
   int compare(const var_c &a_var) const { return m_loc_ptr->compare(*a_var.m_loc_ptr); }
+  var_c copy() const;
   bool operator == (const var_c &a_var) const { return compare(a_var) == 0; }
   bool operator != (const var_c &a_var) const { return compare(a_var) != 0; }
   bool operator < (const var_c &a_var) const { return compare(a_var) < 0; }

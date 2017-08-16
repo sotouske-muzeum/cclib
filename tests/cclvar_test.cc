@@ -32,6 +32,9 @@ void test_cclvar_blank()
   os << blank_1;
   assert(buffer.str() == "<blank>");
 
+  var_c blank_2 = blank_0.copy();
+  assert(blank_0 == blank_2);
+
   bool thrown = false;
   try
   {
@@ -64,6 +67,9 @@ void test_cclvar_bool()
   os << var_c{false};
   assert(buffer.str() == "false");
 
+  var_c bool_1 = bool_0.copy();
+  assert(bool_0 == bool_1);
+
   bool thrown = false;
   try
   {
@@ -88,6 +94,9 @@ void test_cclvar_integer()
   var_c integer_1 = integer_0.to_int() + 10;
   assert(integer_1.to_int() == (value + 10));
 
+  var_c integer_2 = integer_0.copy();
+  assert(integer_0 == integer_2);
+
   bool thrown = false;
   try
   {
@@ -111,6 +120,9 @@ void test_cclvar_double()
 
   var_c double_1 = double_0.to_float() + 10;
   assert(double_1.to_float() == (value + 10));
+
+  var_c double_2 = double_0.copy();
+  assert(double_0 == double_2);
 
   bool thrown = false;
   try
@@ -143,6 +155,9 @@ void test_cclvar_string()
   buffer.str({});
   os << string_0;
   assert(buffer.str() == value);
+
+  var_c string_2 = string_0.copy();
+  assert(string_0 == string_2);
 
   bool thrown = false;
   try
@@ -194,6 +209,13 @@ void test_cclvar_array()
     *value_i = idx++;
   }
   assert(array_0.to_array() == (array_t{0,1,2,3,4}));
+
+  array_0 = array_t{1,2,3,4,array_t{1,2,3}};
+  var_c array_1 = array_0.copy();
+  assert(array_0 == array_1);
+
+  array_1[4][0] = {};
+  assert(array_0 != array_1);
 
   bool thrown = false;
   try
@@ -250,6 +272,13 @@ void test_cclvar_list()
   }
   assert(list_0.to_list() == (list_t{0,1,2,3,4}));
 
+  list_0 = list_t{array_t{1,2,3},1,2,3,4};
+  var_c list_1 = list_0.copy();
+  assert(list_0 == list_1);
+
+  list_1.to_list().front()[0] = {};
+  assert(list_0 != list_1);
+
   bool thrown = false;
   try
   {
@@ -270,7 +299,7 @@ void test_cclvar_dict()
   std::ostream os(&buffer);
 
   buffer.str({});
-  os << cclvar::var_c{cclvar::dict_t{
+  os << var_c{dict_t{
     dp_t{"One",1},
     dp_t{"Two",2},
     dp_t{"Three",3},
@@ -278,7 +307,7 @@ void test_cclvar_dict()
   }};
   assert(buffer.str() == "[Four:4,One:1,Three:3,Two:2]");
 
-  cclvar::var_c dict_0{cclvar::dict_t{
+  var_c dict_0{dict_t{
     dp_t{"Blank",{}},
     dp_t{"Bool",true},
     dp_t{"Integer",1},
@@ -302,7 +331,7 @@ void test_cclvar_dict()
   assert(dict_0["Double"].to_float() == 1.25);
   assert(dict_0["String"].to_str() == "Hello world");
   assert(dict_0["Array"].to_array() == (array_t{1,2,3,4,5}));
-  assert(dict_0["Dict"].to_dict() == (cclvar::dict_t{
+  assert(dict_0["Dict"].to_dict() == (dict_t{
     dp_t{"One",1},
     dp_t{"Two",2},
     dp_t{"Three",3},
@@ -353,6 +382,23 @@ void test_cclvar_dict()
   assert(!(dict_1.has_key("first",value) &&
          value.has_key("second",value) &&
          value.has_key("wrong",value)));
+
+  var_c key = array_t{1,2,3};
+  value = array_t{"One","Two","Three"};
+  
+  dict_0 = dict_t{
+    dp_t{key,value},
+  };
+
+  var_c dict_2 = dict_0.copy();
+  assert(dict_0 == dict_2);
+  key[0] = {};
+  assert(dict_0 != dict_2);
+
+  dict_2 = dict_0.copy();
+  assert(dict_0 == dict_2);
+  value[0] = {};
+  assert(dict_0 != dict_2);
 
   bool thrown = false;
   try
