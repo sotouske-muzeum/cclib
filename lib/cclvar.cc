@@ -136,6 +136,25 @@ int loc_c::compare_value(const loc_c &a_loc) const
   }
 }/*}}}*/
 
+std::unordered_map<std::string,var_c> var_c::m_str_map;
+
+var_c::var_c(const char *a_val)
+{/*{{{*/
+  std::string value{a_val};
+
+  auto map_i = m_str_map.find(value);
+  if (map_i != m_str_map.end())
+  {
+    map_i->second.m_loc_ptr->ref();
+    m_loc_ptr = map_i->second.m_loc_ptr;
+  }
+  else
+  {
+    m_loc_ptr = new loc_c{value};
+    m_str_map[value] = *this;
+  }
+}/*}}}*/
+
 var_c var_c::copy() const
 {/*{{{*/
   switch (m_loc_ptr->m_type)

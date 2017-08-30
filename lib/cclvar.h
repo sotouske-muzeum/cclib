@@ -10,6 +10,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include <cassert>
 
@@ -125,6 +126,8 @@ class loc_c
 class var_c
 {/*{{{*/
   private:
+  static std::unordered_map<std::string,var_c> m_str_map;
+
   loc_c *m_loc_ptr;
 
   public:
@@ -133,7 +136,7 @@ class var_c
   var_c(int64_t     a_val) : m_loc_ptr{new loc_c{a_val}}            {} // NOLINT
   var_c(double      a_val) : m_loc_ptr{new loc_c{a_val}}            {} // NOLINT
   var_c(string_t    a_val) : m_loc_ptr{new loc_c{std::move(a_val)}} {} // NOLINT
-  var_c(const char *a_val) : m_loc_ptr{new loc_c{string_t{a_val}} } {} // NOLINT
+  var_c(const char *a_val); // NOLINT
   var_c(array_t     a_val) : m_loc_ptr{new loc_c{std::move(a_val)}} {} // NOLINT
   var_c(list_t      a_val) : m_loc_ptr{new loc_c{std::move(a_val)}} {} // NOLINT
   var_c(dict_t      a_val) : m_loc_ptr{new loc_c{std::move(a_val)}} {} // NOLINT
