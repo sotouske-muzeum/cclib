@@ -108,6 +108,19 @@ int64_t file_size(const std::string a_file_name)
   return st.st_size;
 }/*}}}*/
 
+std::string hostname()
+{/*{{{*/
+
+  // - ERROR -
+  char hname[256];
+  if (gethostname(hname,256))
+  {
+    cclthrow(error_SYSTEM_HOSTNAME_ERROR);
+  }
+
+  return hname;
+}/*}}}*/
+
 pid_c::~pid_c()
 {/*{{{*/
   if (m_pid != -1)
@@ -333,7 +346,7 @@ void stream_c::flush()
 
 std::string stream_c::read()
 {/*{{{*/
-  
+
   // - ERROR -
   if (m_file == nullptr)
   {
@@ -369,7 +382,7 @@ bool stream_c::readln(std::string &a_line)
   {
     cclthrow(error_STREAM_NOT_OPENED);
   }
-  
+
   char *data = nullptr;
   size_t count = 0;
   ssize_t result = getline(&data,&count,m_file);
@@ -436,7 +449,7 @@ pipe_c::pipe_c(const std::string &a_command,const std::string &a_type)
 
   // - open file -
   m_file = popen(a_command.data(),a_type.data());
-  
+
   // - ERROR -
   if (m_file == nullptr)
   {
@@ -454,7 +467,7 @@ std::string pipe_c::read_close()
 
 void pipe_c::close()
 {/*{{{*/
-  
+
   // - ERROR -
   if (m_file == nullptr)
   {
@@ -472,7 +485,7 @@ void pipe_c::close()
 
 pipe_c::~pipe_c()
 {/*{{{*/
-  
+
   // - if pipe file pointer is not null -
   if (m_file != nullptr)
   {
@@ -485,7 +498,7 @@ file_c::file_c(const std::string &a_file_name,const std::string &a_mode)
 
   // - open file -
   m_file = fopen(a_file_name.data(),a_mode.data());
-  
+
   // - ERROR -
   if (m_file == nullptr)
   {
@@ -675,7 +688,7 @@ const int socket_c::value_off = 0;
 
 socket_c::socket_c(int a_domain,int a_type)
 {/*{{{*/
-  
+
   // - ERROR -
   if ((m_fd = socket(a_domain,a_type,0)) == -1)
   {

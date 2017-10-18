@@ -137,7 +137,7 @@ void auth_server_callback(cclhttp::connection_c &a_conn)
 
     if (user == "jirka" && pass == password)
     {
-      // FIXME debug output
+      // - test output -
       {
         auto values_map = a_conn.values(MHD_HEADER_KIND);
         std::cout << "Authorization: " << values_map["Authorization"] << std::endl;
@@ -163,7 +163,7 @@ void auth_server_callback(cclhttp::connection_c &a_conn)
     std::string user = a_conn.auth_username();
     if (user != "")
     {
-      // FIXME debug output
+      // - test output -
       {
         auto values_map = a_conn.values(MHD_HEADER_KIND);
         std::cout << "Authorization: " << values_map["Authorization"] << std::endl;
@@ -211,12 +211,12 @@ void test_cclhttp_server()
     {
       server.process();
 
-      // FIXME debug output
+      // - test output -
       std::cout << "served ..." << std::endl;
     }
     else
     {
-      // FIXME debug output
+      // - test output -
       std::cout << "waiting ..." << std::endl;
     }
   } while(!g_terminate);
@@ -257,12 +257,12 @@ void test_cclhttp_auth_server()
     {
       server.process();
 
-      // FIXME debug output
+      // - test output -
       std::cout << "served ..." << std::endl;
     }
     else
     {
-      // FIXME debug output
+      // - test output -
       std::cout << "waiting ..." << std::endl;
     }
   } while(!g_terminate);

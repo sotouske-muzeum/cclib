@@ -53,7 +53,7 @@ class server_c
   callback_t m_connection_cb;
   callback_t m_completed_cb;
   std::exception_ptr m_exc_ptr;
- 
+
   static int connection_func(void *cls,struct MHD_Connection *connection,
       const char *url,const char *method,const char *version,
       const char *upload_data,size_t *upload_data_size,void **con_cls);

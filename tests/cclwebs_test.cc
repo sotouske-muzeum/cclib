@@ -160,12 +160,12 @@ void test_cclwebs_server()
     {
       context.process(0);
 
-      // FIXME debug output
+      // - test output -
       std::cout << "served ..." << std::endl;
     }
     else
     {
-      // FIXME debug output
+      // - test output -
       std::cout << "waiting ..." << std::endl;
     }
   } while(!g_terminate);
@@ -173,8 +173,6 @@ void test_cclwebs_server()
 
 void test_cclwebs_client()
 {/*{{{*/
-
-  // FIXME TODO continue ...
   assert(false);
 }/*}}}*/
 

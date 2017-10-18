@@ -362,8 +362,7 @@ client_c::client_c(context_c &a_ctx,const std::string a_addr,int a_port,const st
 {/*{{{*/
   (void)a_addr;(void)a_port;(void)a_path;(void)a_prot;
 
-  // FIXME TODO continue ...
-  cclthrow("websocket client not implemented yet");
+  cclthrow("websocket client not implemented");
 }/*}}}*/
 
 void cclwebs_c::log_emit(int a_level,const char *a_line)

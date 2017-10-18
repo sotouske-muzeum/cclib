@@ -211,6 +211,16 @@ void test_cclsys_file()
   assert(cclsys::file_size("../tests/data/cclsys/track.gpx") == 116403);
 }/*}}}*/
 
+void test_cclsys_hostname()
+{/*{{{*/
+#ifdef MINT_DEVEL_PC
+  assert(cclsys::hostname() == "debian-lenovo");
+  std::cout << "hostname: " << cclsys::hostname() << std::endl;
+#else
+  std::cout << "hostname: " << cclsys::hostname() << std::endl;
+#endif
+}/*}}}*/
+
 void test_cclsys_socket_tcp_server()
 {/*{{{*/
   cclsys::install_signals(signal_handler);
@@ -388,6 +398,7 @@ void test_cclsys_all()
   test_cclsys_timer();
   test_cclsys_pipe();
   test_cclsys_file();
+  test_cclsys_hostname();
   test_cclsys_socket_tcp();
   test_cclsys_socket_udp();
   test_cclsys_clock();
@@ -422,6 +433,10 @@ int main(int argc,char **argv)
       else if (std::string("file") == argv[arg_idx])
       {
         test_cclsys_file();
+      }
+      else if (std::string("hostname") == argv[arg_idx])
+      {
+        test_cclsys_hostname();
       }
       else if (std::string("socket_tcp_server") == argv[arg_idx])
       {
