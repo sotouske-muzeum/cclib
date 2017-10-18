@@ -14,6 +14,7 @@ pkg_search_module(LIBXML2 REQUIRED libxml-2.0)
 pkg_search_module(LIBHTTP REQUIRED libmicrohttpd)
 pkg_search_module(LIBCURL REQUIRED libcurl)
 pkg_search_module(LIBWEBS REQUIRED libwebsockets)
+pkg_search_module(LIBCRYPTO REQUIRED libcrypto)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -45,6 +46,10 @@ target_link_libraries(cclcurl ${LIBCURL_LIBRARIES})
 add_library(cclwebs ${CCLIB_LIB_MODE} lib/cclwebs.cc)
 target_include_directories(cclwebs PUBLIC ${LIBWEBS_INCLUDE_DIRS})
 target_link_libraries(cclwebs ${LIBWEBS_LIBRARIES})
+
+add_library(cclcrypto ${CCLIB_LIB_MODE} lib/cclcrypto.cc)
+target_include_directories(cclcrypto PUBLIC ${LIBCRYPTO_INCLUDE_DIRS})
+target_link_libraries(cclcrypto ${LIBCRYPTO_LIBRARIES})
 
 # - string tools test -
 add_executable(cclstr_test tests/cclstr_test.cc)
@@ -104,6 +109,11 @@ add_test(cclcurl_test_head cclcurl_test head)
 add_executable(cclwebs_test tests/cclwebs_test.cc)
 target_link_libraries(cclwebs_test cclsys cclwebs)
 add_test(cclwebs_test_all cclwebs_test all)
+
+# - crypto tools test -
+add_executable(cclcrypto_test tests/cclcrypto_test.cc)
+target_link_libraries(cclcrypto_test cclsys cclcrypto)
+add_test(cclcrypto_test_all cclcrypto_test all)
 
 add_definitions(-O3 -Wall -Wfatal-errors -DMINT_DEVEL_PC)
 #add_definitions(-g -Wall -Wfatal-errors -DMINT_DEVEL_PC)
