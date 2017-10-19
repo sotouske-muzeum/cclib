@@ -7,6 +7,7 @@
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#include <openssl/rand.h>
 
 namespace cclcrypto {
 
@@ -18,6 +19,11 @@ const std::string error_CRYPTO_INVALID_HEXA_DATA = "invalid hexadecimal data";
 const char c_hexa_map[] = "0123456789abcdef";
 
 std::string digest(const std::string a_data,const EVP_MD *a_md);
+std::string random(size_t a_size);
+std::string passwd_create(const std::string a_passwd,const EVP_MD *a_md);
+std::string passwd_create_hex(const std::string a_passwd,const EVP_MD *a_md);
+bool passwd_verify(const std::string a_passwd,const std::string a_hash,const EVP_MD *a_md);
+bool passwd_verify_hex(const std::string a_passwd,const std::string a_hash,const EVP_MD *a_md);
 std::string bin_to_hex(const std::string a_data);
 std::string hex_to_bin(const std::string a_data);
 
