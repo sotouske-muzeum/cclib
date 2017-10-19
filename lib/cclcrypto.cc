@@ -53,7 +53,7 @@ std::string random(size_t a_size)
   unsigned char buffer[a_size];
   RAND_bytes(buffer,a_size);
 
-  return {reinterpret_cast<char *>(buffer),a_size};
+  return std::string(reinterpret_cast<char *>(buffer),a_size);
 }/*}}}*/
 
 std::string passwd_create(const std::string a_passwd,const EVP_MD *a_md)

@@ -56,8 +56,8 @@ void test_cclcrypto_all()
   test_cclcrypto_digest(EVP_sha512());
   test_cclcrypto_passwd(EVP_sha256());
   test_cclcrypto_passwd(EVP_sha512());
-  //test_cclcrypto_passwd_hex(EVP_sha256());
-  //test_cclcrypto_passwd_hex(EVP_sha512());
+  test_cclcrypto_passwd_hex(EVP_sha256());
+  test_cclcrypto_passwd_hex(EVP_sha512());
 }/*}}}*/
 
 int main(int argc,char **argv)
