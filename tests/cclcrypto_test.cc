@@ -49,6 +49,27 @@ void test_cclcrypto_passwd_hex(const EVP_MD *a_md)
   } while(++idx < 5);
 }/*}}}*/
 
+void test_cclcrypto_base64()
+{/*{{{*/
+  std::string data = "Hello world!";
+  std::string base64 = cclcrypto::base64_encode(data);
+
+  std::cout << data << std::endl;
+  std::cout << base64 << std::endl;
+
+  std::string decoded = cclcrypto::base64_decode(base64);
+  assert(data == decoded);
+
+  std::cout << decoded << std::endl;
+
+  int length = 0;
+  do {
+    std::string data = cclcrypto::random(length);
+    std::string decoded = cclcrypto::base64_decode(cclcrypto::base64_encode(data));
+    assert(data == decoded);
+  } while((length += 3) < 64);
+}/*}}}*/
+
 void test_cclcrypto_all()
 {/*{{{*/
   test_cclcrypto_random();
@@ -58,6 +79,7 @@ void test_cclcrypto_all()
   test_cclcrypto_passwd(EVP_sha512());
   test_cclcrypto_passwd_hex(EVP_sha256());
   test_cclcrypto_passwd_hex(EVP_sha512());
+  test_cclcrypto_base64();
 }/*}}}*/
 
 int main(int argc,char **argv)
@@ -93,6 +115,10 @@ int main(int argc,char **argv)
       else if (std::string("passwd_hex_sha512") == argv[arg_idx])
       {
         test_cclcrypto_passwd_hex(EVP_sha512());
+      }
+      else if (std::string("base64") == argv[arg_idx])
+      {
+        test_cclcrypto_base64();
       }
       else if (std::string("all") == argv[arg_idx])
       {

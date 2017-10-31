@@ -7,12 +7,12 @@ std::string digest(const std::string a_data,const EVP_MD *a_md)
 {/*{{{*/
   EVP_MD_CTX *md_ctx;
 
-  if ((md_ctx = EVP_MD_CTX_create()) == NULL)
+  if ((md_ctx = EVP_MD_CTX_create()) == nullptr)
   {
     cclthrow(error_CRYPTO_MESSAGE_DIGEST_ERROR);
   }
 
-  if (1 != EVP_DigestInit_ex(md_ctx,a_md,NULL))
+  if (1 != EVP_DigestInit_ex(md_ctx,a_md,nullptr))
   {
     EVP_MD_CTX_destroy(md_ctx);
     cclthrow(error_CRYPTO_MESSAGE_DIGEST_ERROR);
@@ -26,7 +26,7 @@ std::string digest(const std::string a_data,const EVP_MD *a_md)
 
   unsigned char *dg_data;
   unsigned int dg_length;
-  if ((dg_data = (unsigned char *)OPENSSL_malloc(EVP_MD_size(a_md))) == NULL)
+  if ((dg_data = reinterpret_cast<unsigned char *>(OPENSSL_malloc(EVP_MD_size(a_md)))) == nullptr)
   {
     EVP_MD_CTX_destroy(md_ctx);
     cclthrow(error_CRYPTO_MESSAGE_DIGEST_ERROR);
@@ -100,7 +100,7 @@ std::string hex_to_bin(const std::string a_data)
 {/*{{{*/
 
   // - ERROR -
-  if (a_data.length() & 0x01)
+  if ((a_data.length() & 0x01) != 0)
   {
     cclthrow(error_CRYPTO_INVALID_HEXA_DATA_SIZE);
   }
@@ -162,11 +162,54 @@ std::string hex_to_bin(const std::string a_data)
   return result;
 }/*}}}*/
 
+std::string base64_encode(const std::string a_data)
+{/*{{{*/
+  std::string result;
+  result.resize(((a_data.length()/3 + 1) << 2) + 1);
+
+  unsigned char *trg_buffer = 
+    reinterpret_cast<unsigned char *>(
+        const_cast<char *>(result.data()));
+
+  const unsigned char *src_buffer = 
+    reinterpret_cast<const unsigned char *>(a_data.data());
+
+  int length = EVP_EncodeBlock(trg_buffer,src_buffer,a_data.length());
+  result.resize(length);
+
+  return result;
+}/*}}}*/
+
+std::string base64_decode(const std::string a_data)
+{/*{{{*/
+  std::string result;
+  result.resize(((a_data.length() >> 2) * 3) + 1);
+
+  unsigned char *trg_buffer = 
+    reinterpret_cast<unsigned char *>(
+        const_cast<char *>(result.data()));
+
+  const unsigned char *src_buffer = 
+    reinterpret_cast<const unsigned char *>(a_data.data());
+
+  int length = EVP_DecodeBlock(trg_buffer,src_buffer,a_data.length());
+
+  // - ERROR -
+  if (length == -1)
+  {
+    cclthrow(error_CRYPTO_INVALID_BASE64_DATA);
+  }
+
+  result.resize(length);
+
+  return result;
+}/*}}}*/
+
 cclcrypto_c::cclcrypto_c() throw()
 {/*{{{*/
   ERR_load_crypto_strings();
   OpenSSL_add_all_algorithms();
-  OPENSSL_config(NULL);
+  OPENSSL_config(nullptr);
 }/*}}}*/
 
 cclcrypto_c::~cclcrypto_c()

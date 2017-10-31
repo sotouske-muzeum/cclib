@@ -113,7 +113,7 @@ std::string hostname()
 
   // - ERROR -
   char hname[256];
-  if (gethostname(hname,256))
+  if (gethostname(hname,256) != 0)
   {
     cclthrow(error_SYSTEM_HOSTNAME_ERROR);
   }

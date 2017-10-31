@@ -28,7 +28,7 @@ void server_connection(cclhttp::connection_c &a_conn)
   case cclhttp::Method::HEAD:
   case cclhttp::Method::GET:
   {/*{{{*/
-    cclhttp::connection_c::values_map_t values_map;
+    cclhttp::connection_c::string_map_t values_map;
     a_conn.values(MHD_HEADER_KIND,values_map);
     
     for (auto value_i = values_map.begin();value_i != values_map.end();++value_i)

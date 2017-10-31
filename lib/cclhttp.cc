@@ -256,7 +256,7 @@ std::string connection_c::upload_data()
   return upload_data;
 }/*}}}*/
 
-connection_c &connection_c::values(enum MHD_ValueKind a_kind,values_map_t &a_values_map)
+connection_c &connection_c::values(enum MHD_ValueKind a_kind,string_map_t &a_values_map)
 {/*{{{*/
 
   // - retrieve key value locations -
@@ -269,9 +269,9 @@ connection_c &connection_c::values(enum MHD_ValueKind a_kind,values_map_t &a_val
   return *this;
 }/*}}}*/
 
-connection_c::values_map_t connection_c::values(enum MHD_ValueKind a_kind)
+connection_c::string_map_t connection_c::values(enum MHD_ValueKind a_kind)
 {/*{{{*/
-  values_map_t values_map;
+  string_map_t values_map;
   values(a_kind,values_map);
   return values_map;
 }/*}}}*/

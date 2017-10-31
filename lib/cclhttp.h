@@ -77,14 +77,14 @@ class connection_c
   friend class server_c;
 
   public:
-  typedef std::unordered_map<std::string,std::string> values_map_t;
+  typedef std::unordered_map<std::string,std::string> string_map_t;
 
   private:
   server_c *m_srv_ptr;
 
   Method m_conn_type;
   MHD_Connection *m_conn_ptr;
-  values_map_t m_key_value_map;
+  string_map_t m_key_value_map;
   void *m_user_data;
 
   const char *m_url;
@@ -108,8 +108,8 @@ class connection_c
   std::string version() const { return m_version; }
   std::string upload_data();
   void *&user_data() { return m_user_data; }
-  connection_c &values(enum MHD_ValueKind a_kind,values_map_t &a_values_map);
-  values_map_t values(enum MHD_ValueKind a_kind);
+  connection_c &values(enum MHD_ValueKind a_kind,string_map_t &a_values_map);
+  string_map_t values(enum MHD_ValueKind a_kind);
   connection_c &queue_response(unsigned a_status,const response_c &a_resp);
 
   connection_c &queue_basic_auth_fail_response(
