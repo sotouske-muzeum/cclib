@@ -62,9 +62,9 @@ std::string passwd_create(const std::string a_passwd,const EVP_MD *a_md)
   return salt + digest(salt + a_passwd,a_md);
 }/*}}}*/
 
-std::string passwd_create_hex(const std::string a_passwd,const EVP_MD *a_md)
+std::string passwd_create_base16(const std::string a_passwd,const EVP_MD *a_md)
 {/*{{{*/
-  return bin_to_hex(passwd_create(a_passwd,a_md));
+  return base16_encode(passwd_create(a_passwd,a_md));
 }/*}}}*/
 
 bool passwd_verify(const std::string a_passwd,const std::string a_hash,const EVP_MD *a_md)
@@ -74,12 +74,12 @@ bool passwd_verify(const std::string a_passwd,const std::string a_hash,const EVP
       digest(salt + a_passwd,a_md)) == 0;
 }/*}}}*/
 
-bool passwd_verify_hex(const std::string a_passwd,const std::string a_hash,const EVP_MD *a_md)
+bool passwd_verify_base16(const std::string a_passwd,const std::string a_hash,const EVP_MD *a_md)
 {/*{{{*/
-  return passwd_verify(a_passwd,hex_to_bin(a_hash),a_md);
+  return passwd_verify(a_passwd,base16_decode(a_hash),a_md);
 }/*}}}*/
 
-std::string bin_to_hex(const std::string a_data)
+std::string base16_encode(const std::string a_data)
 {/*{{{*/
   std::string result;
   result.reserve(a_data.length() << 1);
@@ -89,20 +89,20 @@ std::string bin_to_hex(const std::string a_data)
           ++char_i)
   {
     unsigned char ch = static_cast<unsigned char>(*char_i);
-    result += c_hexa_map[ch >> 4];
-    result += c_hexa_map[ch & 0x0f];
+    result += c_base16_map[ch >> 4];
+    result += c_base16_map[ch & 0x0f];
   }
 
   return result;
 }/*}}}*/
 
-std::string hex_to_bin(const std::string a_data)
+std::string base16_decode(const std::string a_data)
 {/*{{{*/
 
   // - ERROR -
   if ((a_data.length() & 0x01) != 0)
   {
-    cclthrow(error_CRYPTO_INVALID_HEXA_DATA_SIZE);
+    cclthrow(error_CRYPTO_INVALID_BASE16_DATA_SIZE);
   }
 
   std::string result;
@@ -131,7 +131,7 @@ std::string hex_to_bin(const std::string a_data)
     // - ERROR -
     else
     {
-      cclthrow(error_CRYPTO_INVALID_HEXA_DATA);
+      cclthrow(error_CRYPTO_INVALID_BASE16_DATA);
     }
 
     ch <<= 4;
@@ -153,7 +153,7 @@ std::string hex_to_bin(const std::string a_data)
     // - ERROR -
     else
     {
-      cclthrow(error_CRYPTO_INVALID_HEXA_DATA);
+      cclthrow(error_CRYPTO_INVALID_BASE16_DATA);
     }
 
     result += ch;
