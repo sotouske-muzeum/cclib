@@ -18,6 +18,14 @@ namespace cclvar {
 
 class var_c;
 
+// - exceptions list -
+const std::string error_VARIABLE_INVALID_TYPE_REQUESTED = "cclvar: invalid variable type requested";
+const std::string error_INVALID_OPERATION_ON_VARIABLE = "cclvar: invalid operation on variable";
+const std::string error_ARRAY_INDEX_EXCEEDS_RANGE = "cclvar: index exceeds array range";
+const std::string error_UNSUPPORTED_VARIABLE_TYPE = "cclvar: unsupported variable type";
+const std::string error_UNEXPECTED_VARIABLE_TYPE = "cclvar: unexpected variable type";
+const std::string error_INVALID_ARRAY_SIZE = "cclvar: invalid array size";
+
 enum
 {/*{{{*/
   type_blank = 0,
@@ -29,14 +37,6 @@ enum
   type_list,
   type_dict,
 };/*}}}*/
-
-// - exceptions list -
-const std::string error_VARIABLE_INVALID_TYPE_REQUESTED = "cclvar: invalid variable type requested";
-const std::string error_INVALID_OPERATION_ON_VARIABLE = "cclvar: invalid operation on variable";
-const std::string error_ARRAY_INDEX_EXCEEDS_RANGE = "cclvar: index exceeds array range";
-const std::string error_UNSUPPORTED_VARIABLE_TYPE = "cclvar: unsupported variable type";
-const std::string error_UNEXPECTED_VARIABLE_TYPE = "cclvar: unexpected variable type";
-const std::string error_INVALID_ARRAY_SIZE = "cclvar: invalid array size";
 
 union data_type_u
 {/*{{{*/

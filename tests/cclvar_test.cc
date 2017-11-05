@@ -11,6 +11,8 @@ using cclvar::array_t;
 using cclvar::list_t;
 using cclvar::dict_t;
 
+typedef cclvar::dict_pair_t dp_t;
+
 void test_cclvar_blank()
 {/*{{{*/
   std::stringbuf buffer;
@@ -293,8 +295,6 @@ void test_cclvar_list()
 
 void test_cclvar_dict()
 {/*{{{*/
-  typedef cclvar::dict_pair_t dp_t;
-
   std::stringbuf buffer;
   std::ostream os(&buffer);
 

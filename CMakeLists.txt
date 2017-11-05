@@ -25,6 +25,9 @@ set(CCLIB_LIB_MODE STATIC) # [STATIC | SHARED | MODULE]
 add_library(cclstr ${CCLIB_LIB_MODE} lib/cclstr.cc)
 add_library(cclvar ${CCLIB_LIB_MODE} lib/cclvar.cc)
 
+add_library(cclvarval ${AMTRAK_LIB_MODE} lib/cclvarval.cc)
+target_link_libraries(cclvarval cclvar)
+
 add_library(cclsys ${CCLIB_LIB_MODE} lib/cclsys.cc)
 target_link_libraries(cclsys rt)
 
@@ -65,6 +68,11 @@ add_test(cclstr_test_regex cclstr_test regex)
 add_executable(cclvar_test tests/cclvar_test.cc)
 target_link_libraries(cclvar_test cclvar)
 add_test(cclvar_test_all cclvar_test all)
+
+# - variable validation tools test -
+add_executable(cclvarval_test tests/cclvarval_test.cc)
+target_link_libraries(cclvarval_test cclvarval)
+add_test(cclvarval_test_all cclvarval_test all)
 
 # - system tools test -
 add_executable(cclsys_test tests/cclsys_test.cc)
