@@ -32,6 +32,7 @@ string_map_t validator_c::c_prop_map
   {"size >"   ,prop_size_greater},
   {"size <="  ,prop_size_lesser_equal},
   {"size >="  ,prop_size_greater_equal},
+  {"regex"    ,prop_regex},
   {"items"    ,prop_items},
   {"opt-items",prop_opt_items},
   {"all-keys" ,prop_all_keys},
@@ -195,6 +196,33 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
             cclthrow(error_VARVAL_VALUE_INVALID_SIZE);
           }
           break;
+      }
+    }
+    break;
+    case prop_regex:
+    {
+      if (a_value.type() != cclvar::type_string)
+      {
+        cclthrow(error_VARVAL_INVALID_TYPE);
+      }
+
+      cclstr::regex_c *regex_ptr;
+
+      // - retrieve regular expression -
+      auto regex_i = m_regex_map.find(prop_i->second.to_str());
+      if (regex_i == m_regex_map.end())
+      {
+        m_regex_map[prop_i->second.to_str()] =
+          regex_ptr = new cclstr::regex_c(prop_i->second.to_str());
+      }
+      else
+      {
+        regex_ptr = regex_i->second;
+      }
+
+      if (!regex_ptr->match(a_value.to_str()))
+      {
+        cclthrow(error_VARVAL_INVALID_VALUE);
       }
     }
     break;
@@ -364,6 +392,16 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
       cclthrow(error_VARVAL_INVALID_SCHEMA_PROPERTY);
       break;
     }
+  }
+}/*}}}*/
+
+validator_c::~validator_c()
+{/*{{{*/
+  for (auto regex_i = m_regex_map.begin();
+            regex_i != m_regex_map.end();
+          ++regex_i)
+  {
+    delete regex_i->second;
   }
 }/*}}}*/
 

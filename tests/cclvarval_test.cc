@@ -373,9 +373,9 @@ void test_cclvarval_size()
   cclvar::var_c lst3{list_t{1,2,3}};
   cclvar::var_c lst4{list_t{1,2,3,4}};
 
-  cclvar::var_c dct2{dict_t{dp_t{"first",1},dp_t{"second",2}}};
-  cclvar::var_c dct3{dict_t{dp_t{"first",1},dp_t{"second",2},dp_t{"third",3}}};
-  cclvar::var_c dct4{dict_t{dp_t{"first",1},dp_t{"second",2},dp_t{"third",3},dp_t{"fourth",4}}};
+  cclvar::var_c dct2{dict_t{dp_t{"first",1},dp_t{"second",2} }};
+  cclvar::var_c dct3{dict_t{dp_t{"first",1},dp_t{"second",2},dp_t{"third",3} }};
+  cclvar::var_c dct4{dict_t{dp_t{"first",1},dp_t{"second",2},dp_t{"third",3},dp_t{"fourth",4} }};
 
   val.validate(array_t{str3,str3,str3,str3,str3,str3});
   val.validate(array_t{arr3,arr3,arr3,arr3,arr3,arr3});
@@ -411,6 +411,30 @@ void test_cclvarval_size()
   VALIDATE_CATCH_CHECK(val.validate(array_t{dct3,dct3,dct3,dct3,dct3,dct2});,error_VARVAL_VALUE_INVALID_SIZE);
 }/*}}}*/
 
+void test_cclvarval_regex()
+{/*{{{*/
+  cclvarval::validator_c val{dict_t
+  {/*{{{*/
+    dp_t{"root",dict_t{
+      dp_t{"type","array"},
+      dp_t{"items",dict_t{
+        dp_t{0,dict_t{
+          dp_t{"regex","^.*$"},
+        }},
+        dp_t{1,dict_t{
+          dp_t{"regex","^ab*c$"},
+        }},
+      }},
+    }},
+  }};/*}}}*/
+
+  val.validate(array_t{"hello","ac"});
+  val.validate(array_t{"hello","abc"});
+
+  VALIDATE_CATCH_CHECK(val.validate(array_t{true,"ac"});,error_VARVAL_INVALID_TYPE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{"hello","ab"});,error_VARVAL_INVALID_VALUE);
+}/*}}}*/
+
 void test_cclvarval_all()
 {/*{{{*/
   test_cclvarval_blank();
@@ -422,6 +446,7 @@ void test_cclvarval_all()
   test_cclvarval_dict();
   test_cclvarval_compare();
   test_cclvarval_size();
+  test_cclvarval_regex();
 }/*}}}*/
 
 int main(int argc,char **argv)
@@ -465,6 +490,10 @@ int main(int argc,char **argv)
       else if (std::string("size") == argv[arg_idx])
       {
         test_cclvarval_size();
+      }
+      else if (std::string("regex") == argv[arg_idx])
+      {
+        test_cclvarval_regex();
       }
       else if (std::string("all") == argv[arg_idx])
       {

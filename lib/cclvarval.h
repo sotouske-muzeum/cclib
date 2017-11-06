@@ -3,6 +3,7 @@
 #define CCLIB_CCLVARVAL_H
 
 #include "cclvar.h"
+#include "cclstr.h"
 
 #include <algorithm>
 
@@ -32,6 +33,7 @@ enum
   prop_size_greater,
   prop_size_lesser_equal,
   prop_size_greater_equal,
+  prop_regex,
   prop_items,
   prop_opt_items,
   prop_all_keys,
@@ -39,6 +41,7 @@ enum
 };/*}}}*/
 
 typedef std::unordered_map<std::string,int> string_map_t;
+typedef std::unordered_map<std::string,cclstr::regex_c *> regex_map_t;
 
 class validator_c
 {
@@ -47,6 +50,7 @@ class validator_c
   static string_map_t c_prop_map;
 
   cclvar::var_c m_schema;
+  regex_map_t m_regex_map;
   cclvar::array_t m_value_stack;
   cclvar::array_t m_props_stack;
 
@@ -56,7 +60,8 @@ class validator_c
   validator_c(const validator_c &) = delete;
   void operator = (const validator_c &) = delete;
   explicit validator_c(cclvar::var_c a_schema) :
-    m_schema{a_schema}, m_value_stack{}, m_props_stack{} {};
+    m_schema{a_schema}, m_regex_map{}, m_value_stack{}, m_props_stack{} {};
+  ~validator_c();
 
   void validate(cclvar::var_c a_value);
   inline cclvar::var_c value_stack();
