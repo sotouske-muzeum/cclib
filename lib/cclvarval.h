@@ -12,6 +12,7 @@ namespace cclvarval {
 // - exceptions list -
 const std::string error_VARVAL_INVALID_SCHEMA_REFERENCE = "validation: invalid schema reference";
 const std::string error_VARVAL_INVALID_SCHEMA_PROPERTY = "validation: invalid schema property";
+const std::string error_VARVAL_INVALID_SCHEMA_TYPE = "validation: invalid schema type";
 const std::string error_VARVAL_INVALID_TYPE = "validation: invalid type";
 const std::string error_VARVAL_INVALID_VALUE = "validation: invalid value";
 const std::string error_VARVAL_VALUE_INVALID_SIZE = "validation: invalid value size";

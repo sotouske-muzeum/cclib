@@ -1,6 +1,5 @@
 
 #include "cclvarval.h"
-#include "ccljson.h"
 
 using cclvar::var_c;
 using cclvar::string_t;

@@ -56,8 +56,12 @@ string_map_t validator_c::c_prop_map
         std::rethrow_exception(std::current_exception());\
       }\
     }\
+    /* - ERROR - */\
     else\
     {\
+      m_props_stack.push_back(PROPS_REF);\
+      m_props_stack.push_back("ref");\
+      \
       INVALID_CODE;\
       cclthrow(error_VARVAL_INVALID_SCHEMA_REFERENCE);\
     }\
@@ -82,47 +86,85 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
             prop_i != props_dict.end();
           ++prop_i)
   {
-    int prop_id = c_prop_map[prop_i->first.to_str()];
+    int prop_id;
+
+    try {
+      prop_id = c_prop_map.at(prop_i->first.to_str());
+    }
+
+    // - ERROR -
+    catch (std::exception &e)
+    {
+      m_props_stack.push_back(prop_i->first.to_str());
+      cclthrow(error_VARVAL_INVALID_SCHEMA_PROPERTY);
+    }
 
     switch (prop_id)
     {
     case prop_type:
-      if (a_value.type() != c_type_map[prop_i->second.to_str()])
+    {
+      int type;
+
+      try {
+        type = c_type_map.at(prop_i->second.to_str());
+      }
+
+      // - ERROR -
+      catch (std::exception &e)
+      {
+        cclthrow(error_VARVAL_INVALID_SCHEMA_TYPE);
+      }
+
+      // - ERROR -
+      if (a_value.type() != type)
       {
         cclthrow(error_VARVAL_INVALID_TYPE);
       }
-      break;
+    }
+    break;
     case prop_equal:
+
+      // - ERROR -
       if (a_value != prop_i->second)
       {
         cclthrow(error_VARVAL_INVALID_VALUE);
       }
       break;
     case prop_not_equal:
+
+      // - ERROR -
       if (a_value == prop_i->second)
       {
         cclthrow(error_VARVAL_INVALID_VALUE);
       }
       break;
     case prop_lesser:
+
+      // - ERROR -
       if (a_value.compare(prop_i->second) >= 0)
       {
         cclthrow(error_VARVAL_INVALID_VALUE);
       }
       break;
     case prop_greater:
+
+      // - ERROR -
       if (a_value.compare(prop_i->second) <= 0)
       {
         cclthrow(error_VARVAL_INVALID_VALUE);
       }
       break;
     case prop_lesser_equal:
+
+      // - ERROR -
       if (a_value.compare(prop_i->second) > 0)
       {
         cclthrow(error_VARVAL_INVALID_VALUE);
       }
       break;
     case prop_greater_equal:
+
+      // - ERROR -
       if (a_value.compare(prop_i->second) < 0)
       {
         cclthrow(error_VARVAL_INVALID_VALUE);
@@ -134,7 +176,7 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
     case prop_size_greater:
     case prop_size_lesser_equal:
     case prop_size_greater_equal:
-    {
+    {/*{{{*/
       size_t value_size;
       switch (a_value.type())
       {
@@ -161,46 +203,60 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
       switch (prop_id)
       {
         case prop_size_equal:
+
+          // - ERROR -
           if (value_size != prop_size)
           {
             cclthrow(error_VARVAL_VALUE_INVALID_SIZE);
           }
           break;
         case prop_size_not_equal:
+
+          // - ERROR -
           if (value_size == prop_size)
           {
             cclthrow(error_VARVAL_VALUE_INVALID_SIZE);
           }
           break;
         case prop_size_lesser:
+
+          // - ERROR -
           if (value_size >= prop_size)
           {
             cclthrow(error_VARVAL_VALUE_INVALID_SIZE);
           }
           break;
         case prop_size_greater:
+
+          // - ERROR -
           if (value_size <= prop_size)
           {
             cclthrow(error_VARVAL_VALUE_INVALID_SIZE);
           }
           break;
         case prop_size_lesser_equal:
+
+          // - ERROR -
           if (value_size > prop_size)
           {
             cclthrow(error_VARVAL_VALUE_INVALID_SIZE);
           }
           break;
         case prop_size_greater_equal:
+
+          // - ERROR -
           if (value_size < prop_size)
           {
             cclthrow(error_VARVAL_VALUE_INVALID_SIZE);
           }
           break;
       }
-    }
+    }/*}}}*/
     break;
     case prop_regex:
-    {
+    {/*{{{*/
+
+      // - ERROR -
       if (a_value.type() != cclvar::type_string)
       {
         cclthrow(error_VARVAL_INVALID_TYPE);
@@ -220,17 +276,19 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
         regex_ptr = regex_i->second;
       }
 
+      // - ERROR -
       if (!regex_ptr->match(a_value.to_str()))
       {
         cclthrow(error_VARVAL_INVALID_VALUE);
       }
-    }
+    }/*}}}*/
     break;
     case prop_items:
+    {/*{{{*/
       switch (a_value.type())
       {
       case cclvar::type_array:
-      {/*{{{*/
+      {
         cclvar::dict_t &items_dict = prop_i->second.to_dict();
         cclvar::array_t &value_arr = a_value.to_array();
 
@@ -256,10 +314,10 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
             m_props_stack.push_back("items");
           );
         }
-      }/*}}}*/
+      }
       break;
       case cclvar::type_dict:
-      {/*{{{*/
+      {
         cclvar::dict_t &items_dict = prop_i->second.to_dict();
 
         for (auto key_i = items_dict.begin();
@@ -283,19 +341,21 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
             m_props_stack.push_back("items");
           );
         }
-      }/*}}}*/
+      }
       break;
 
       // - ERROR -
       default:
         cclthrow(error_VARVAL_INVALID_TYPE);
       }
-      break;
+    }/*}}}*/
+    break;
     case prop_opt_items:
+    {/*{{{*/
       switch (a_value.type())
       {
       case cclvar::type_dict:
-      {/*{{{*/
+      {
         cclvar::dict_t &opt_items_dict = prop_i->second.to_dict();
 
         for (auto key_i = opt_items_dict.begin();
@@ -313,19 +373,21 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
             );
           }
         }
-      }/*}}}*/
+      }
       break;
 
       // - ERROR -
       default:
         cclthrow(error_VARVAL_INVALID_TYPE);
       }
-      break;
+    }/*}}}*/
+    break;
     case prop_all_keys:
+    {/*{{{*/
       switch (a_value.type())
       {
       case cclvar::type_dict:
-      {/*{{{*/
+      {
         cclvar::dict_t &value_dict = a_value.to_dict();
 
         for (auto pair_i = value_dict.begin();
@@ -338,19 +400,21 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
             m_props_stack.push_back("all-keys");
           );
         }
-      }/*}}}*/
+      }
       break;
 
       // - ERROR -
       default:
         cclthrow(error_VARVAL_INVALID_TYPE);
       }
-      break;
+    }/*}}}*/
+    break;
     case prop_all_items:
+    {/*{{{*/
       switch (a_value.type())
       {
       case cclvar::type_array:
-      {/*{{{*/
+      {
         cclvar::array_t &value_arr = a_value.to_array();
 
         for (auto item_i = value_arr.begin();
@@ -363,10 +427,10 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
             m_props_stack.push_back("all-items");
           );
         }
-      }/*}}}*/
+      }
       break;
       case cclvar::type_dict:
-      {/*{{{*/
+      {
         cclvar::dict_t &value_dict = a_value.to_dict();
 
         for (auto pair_i = value_dict.begin();
@@ -379,13 +443,15 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
             m_props_stack.push_back("all-items");
           );
         }
-      }/*}}}*/
+      }
       break;
+
       // - ERROR -
       default:
         cclthrow(error_VARVAL_INVALID_TYPE);
       }
-      break;
+    }/*}}}*/
+    break;
 
     // - ERROR -
     default:

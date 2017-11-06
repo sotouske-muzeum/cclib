@@ -26,7 +26,7 @@ add_library(cclstr ${CCLIB_LIB_MODE} lib/cclstr.cc)
 add_library(cclvar ${CCLIB_LIB_MODE} lib/cclvar.cc)
 
 add_library(cclvarval ${AMTRAK_LIB_MODE} lib/cclvarval.cc)
-target_link_libraries(cclvarval cclvar)
+target_link_libraries(cclvarval cclvar cclstr)
 
 add_library(cclsys ${CCLIB_LIB_MODE} lib/cclsys.cc)
 target_link_libraries(cclsys rt)
