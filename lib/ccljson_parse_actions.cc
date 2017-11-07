@@ -172,11 +172,8 @@ bool parser_c::pa_json_string(parser_c &_this)
   auto iter = _this.m_source.data() + lse.m_term_start + 1;
   auto iter_end = _this.m_source.data() + lse.m_term_end - 1;
 
-  int buff_size = iter_end - iter;
-  char buff[buff_size];
-
-  std::stringbuf char_buffer;
-  char_buffer.pubsetbuf(buff,buff_size);
+  std::string const_str;
+  const_str.reserve(iter_end - iter);
 
   if (iter < iter_end)
   {
@@ -220,18 +217,18 @@ bool parser_c::pa_json_string(parser_c &_this)
           // - convert utf16/32 value to utf8 character string -
           if (value <= 0x7f)
           {
-            char_buffer.sputc(value);
+            const_str += value;
           }
           else if (value <= 0x7ff)
           {
-            char_buffer.sputc(0xc0 | value >> 6);
-            char_buffer.sputc(0x80 | (value & 0x3f));
+            const_str += 0xc0 | value >> 6;
+            const_str += 0x80 | (value & 0x3f);
           }
           else if (value <= 0xffff)
           {
-            char_buffer.sputc(0xe0 |   value >> 12);
-            char_buffer.sputc(0x80 | ((value >>  6) & 0x3f));
-            char_buffer.sputc(0x80 |  (value        & 0x3f));
+            const_str += 0xe0 |   value >> 12;
+            const_str += 0x80 | ((value >>  6) & 0x3f);
+            const_str += 0x80 |  (value        & 0x3f);
           }
         }
         else
@@ -239,25 +236,25 @@ bool parser_c::pa_json_string(parser_c &_this)
           switch (*iter++)
           {
           case 'b':
-            char_buffer.sputc('\b');
+            const_str += '\b';
             break;
           case 'f':
-            char_buffer.sputc('\f');
+            const_str += '\f';
             break;
           case 'n':
-            char_buffer.sputc('\n');
+            const_str += '\n';
             break;
           case 'r':
-            char_buffer.sputc('\r');
+            const_str += '\r';
             break;
           case 't':
-            char_buffer.sputc('\t');
+            const_str += '\t';
             break;
           case '\\':
-            char_buffer.sputc('\\');
+            const_str += '\\';
             break;
           case '"':
-            char_buffer.sputc('"');
+            const_str += '"';
             break;
           default:
             assert(false);
@@ -266,13 +263,11 @@ bool parser_c::pa_json_string(parser_c &_this)
       }
       else
       {
-        char_buffer.sputc(*iter++);
+        const_str += *iter++;
       }
     }
     while(iter != iter_end);
   }
-
-  std::string const_str(char_buffer.str());
 
   auto map_iter = _this.m_string_map.find(const_str);
   if (map_iter == _this.m_string_map.end())
