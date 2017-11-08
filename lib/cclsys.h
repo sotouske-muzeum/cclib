@@ -28,6 +28,8 @@ const std::string error_SYSTEM_MISSING_PROGRAM_NAME = "missing name of program t
 const std::string error_SYSTEM_CANNOT_CREATE_NEW_PROCESS = "cannot create new process";
 const std::string error_SYSTEM_FILE_DOES_NOT_EXIST = "file does not exist";
 const std::string error_SYSTEM_HOSTNAME_ERROR = "error while retrieving hostname";
+const std::string error_SYSTEM_SETENV_ERROR = "error while setting environment variable";
+const std::string error_SYSTEM_GETENV_ERROR = "error while retrieving environment variable";
 const std::string error_TIMER_CREATE_ERROR = "error while creating timer";
 const std::string error_TIMER_SETTIME_ERROR = "error while setting timer";
 const std::string error_STREAM_NOT_OPENED = "stream is not opened";
@@ -68,6 +70,8 @@ pid_t execute(const std::vector<std::string> &a_args);
 int64_t sleep(int64_t a_delay);
 int64_t file_size(const std::string a_file_name);
 std::string hostname();
+void setenv(const std::string a_name,const std::string a_value);
+std::string getenv(const std::string a_name);
 
 class pid_c
 {/*{{{*/

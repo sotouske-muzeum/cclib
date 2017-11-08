@@ -286,6 +286,61 @@ void test_cclvarval_dict()
 
 }/*}}}*/
 
+void test_cclvarval_ref()
+{/*{{{*/
+  cclvarval::validator_c val{dict_t
+  {/*{{{*/
+    dp_t{"r-integer",dict_t{
+      dp_t{"type","integer"},
+    }},
+    dp_t{"r-positive",dict_t{
+      dp_t{">",0},
+    }},
+    dp_t{"r-negative",dict_t{
+      dp_t{"<",0},
+    }},
+    dp_t{"r-zero",dict_t{
+      dp_t{"==",0},
+    }},
+    dp_t{"r-pos-int",dict_t{
+      dp_t{"ref0","r-integer"},
+      dp_t{"ref1","r-positive"},
+    }},
+    dp_t{"r-neg-int",dict_t{
+      dp_t{"ref0","r-integer"},
+      dp_t{"ref1","r-negative"},
+    }},
+    dp_t{"r-zero-int",dict_t{
+      dp_t{"ref0","r-integer"},
+      dp_t{"ref1","r-zero"},
+    }},
+    dp_t{"root",dict_t{
+      dp_t{"type","array"},
+      dp_t{"items",dict_t{
+        dp_t{0,dict_t{
+          dp_t{"ref","r-pos-int"},
+        }},
+        dp_t{1,dict_t{
+          dp_t{"ref","r-neg-int"},
+        }},
+        dp_t{2,dict_t{
+          dp_t{"ref","r-zero-int"},
+        }},
+      }},
+    }},
+  }};/*}}}*/
+
+  val.validate(array_t{10,-10,0});
+
+  VALIDATE_CATCH_CHECK(val.validate(array_t{10.0,-10,0});,error_VARVAL_INVALID_TYPE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{10,-10.0,0});,error_VARVAL_INVALID_TYPE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{10,-10,0.0});,error_VARVAL_INVALID_TYPE);
+
+  VALIDATE_CATCH_CHECK(val.validate(array_t{-10,-10,0});,error_VARVAL_INVALID_VALUE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{10,10,0});,error_VARVAL_INVALID_VALUE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{10,-10,10});,error_VARVAL_INVALID_VALUE);
+}/*}}}*/
+
 void test_cclvarval_compare()
 {/*{{{*/
   cclvarval::validator_c val{dict_t
@@ -443,6 +498,7 @@ void test_cclvarval_all()
   test_cclvarval_string();
   test_cclvarval_array();
   test_cclvarval_dict();
+  test_cclvarval_ref();
   test_cclvarval_compare();
   test_cclvarval_size();
   test_cclvarval_regex();
@@ -481,6 +537,10 @@ int main(int argc,char **argv)
       else if (std::string("dict") == argv[arg_idx])
       {
         test_cclvarval_dict();
+      }
+      else if (std::string("ref") == argv[arg_idx])
+      {
+        test_cclvarval_ref();
       }
       else if (std::string("compare") == argv[arg_idx])
       {

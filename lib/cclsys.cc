@@ -121,6 +121,29 @@ std::string hostname()
   return hname;
 }/*}}}*/
 
+void setenv(const std::string a_name,const std::string a_value)
+{/*{{{*/
+
+  // - ERROR -
+  if (::setenv(a_name.data(),a_value.data(),1) != 0)
+  {
+    cclthrow(error_SYSTEM_SETENV_ERROR);
+  }
+}/*}}}*/
+
+std::string getenv(const std::string a_name)
+{/*{{{*/
+  char *value = ::getenv(a_name.data());
+
+  // - ERROR -
+  if (value == nullptr)
+  {
+    cclthrow(error_SYSTEM_GETENV_ERROR);
+  }
+
+  return value;
+}/*}}}*/
+
 pid_c::~pid_c()
 {/*{{{*/
   if (m_pid != -1)

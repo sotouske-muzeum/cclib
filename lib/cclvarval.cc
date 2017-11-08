@@ -39,32 +39,38 @@ string_map_t validator_c::c_prop_map
   {"all-items",prop_all_items},
 };/*}}}*/
 
-#define VALIDATE_PAIR_CALL(VALUE,PROPS_REF,INVALID_CODE) \
+#define VALIDATE_PAIR_REFERENCE(VALUE,PROPS_REF,INVALID_CODE) \
 {/*{{{*/\
-  if ((PROPS_REF).type() == cclvar::type_string)\
+  cclvar::var_c ref;\
+  if ((PROPS_REF).type() == cclvar::type_string &&\
+      m_schema.has_key(PROPS_REF,ref))\
   {\
-    cclvar::var_c ref;\
-    if (m_schema.has_key(PROPS_REF,ref))\
-    {\
-      try { validate_pair(VALUE,ref); }\
-      catch (...)\
-      {\
-        m_props_stack.push_back(PROPS_REF);\
-        m_props_stack.push_back("ref");\
-        \
-        INVALID_CODE;\
-        std::rethrow_exception(std::current_exception());\
-      }\
-    }\
-    /* - ERROR - */\
-    else\
+    try { validate_pair(VALUE,ref); }\
+    catch (...)\
     {\
       m_props_stack.push_back(PROPS_REF);\
       m_props_stack.push_back("ref");\
       \
       INVALID_CODE;\
-      cclthrow(error_VARVAL_INVALID_SCHEMA_REFERENCE);\
+      std::rethrow_exception(std::current_exception());\
     }\
+  }\
+  /* - ERROR - */\
+  else\
+  {\
+    m_props_stack.push_back(PROPS_REF);\
+    m_props_stack.push_back("ref");\
+    \
+    INVALID_CODE;\
+    cclthrow(error_VARVAL_INVALID_SCHEMA_REFERENCE);\
+  }\
+}/*}}}*/
+
+#define VALIDATE_PAIR_CALL(VALUE,PROPS_REF,INVALID_CODE) \
+{/*{{{*/\
+  if ((PROPS_REF).type() == cclvar::type_string)\
+  {\
+    VALIDATE_PAIR_REFERENCE(VALUE,PROPS_REF,INVALID_CODE);\
   }\
   else\
   {\
@@ -95,14 +101,23 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
     // - ERROR -
     catch (std::exception &e)
     {
-      m_props_stack.push_back(prop_i->first.to_str());
-      cclthrow(error_VARVAL_INVALID_SCHEMA_PROPERTY);
+      // - property is reference -
+      if (prop_i->first.to_str().compare(0,3,"ref") == 0)
+      {
+        VALIDATE_PAIR_REFERENCE(a_value,prop_i->second,);
+        continue;
+      }
+      else
+      {
+        m_props_stack.push_back(prop_i->first.to_str());
+        cclthrow(error_VARVAL_INVALID_SCHEMA_PROPERTY);
+      }
     }
 
     switch (prop_id)
     {
     case prop_type:
-    {
+    {/*{{{*/
       int type;
 
       try {
@@ -120,7 +135,7 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
       {
         cclthrow(error_VARVAL_INVALID_TYPE);
       }
-    }
+    }/*}}}*/
     break;
     case prop_equal:
 

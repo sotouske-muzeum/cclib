@@ -221,6 +221,26 @@ void test_cclsys_hostname()
 #endif
 }/*}}}*/
 
+void test_cclsys_envvar()
+{/*{{{*/
+  bool thrown = false;
+  try
+  {
+    cclsys::getenv("NON_EXISTENT");
+  }
+  catch (...)
+  {
+    thrown = true;
+  }
+  assert(thrown);
+
+  std::string var_name = "ENV_NAME";
+  std::string var_value = "ENV_VALUE";
+
+  cclsys::setenv(var_name,var_value);
+  assert(cclsys::getenv(var_name) == var_value);
+}/*}}}*/
+
 void test_cclsys_socket_tcp_server()
 {/*{{{*/
   cclsys::install_signals(signal_handler);
@@ -399,6 +419,7 @@ void test_cclsys_all()
   test_cclsys_pipe();
   test_cclsys_file();
   test_cclsys_hostname();
+  test_cclsys_envvar();
   test_cclsys_socket_tcp();
   test_cclsys_socket_udp();
   test_cclsys_clock();
@@ -437,6 +458,10 @@ int main(int argc,char **argv)
       else if (std::string("hostname") == argv[arg_idx])
       {
         test_cclsys_hostname();
+      }
+      else if (std::string("envvar") == argv[arg_idx])
+      {
+        test_cclsys_envvar();
       }
       else if (std::string("socket_tcp_server") == argv[arg_idx])
       {
