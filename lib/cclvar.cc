@@ -16,6 +16,9 @@ loc_c::~loc_c()
     case type_list:
       delete static_cast<list_t *>(m_data_ptr);
       break;
+    case type_set:
+      delete static_cast<set_t *>(m_data_ptr);
+      break;
     case type_dict:
       delete static_cast<dict_t *>(m_data_ptr);
       break;
@@ -76,6 +79,30 @@ int loc_c::compare_value(const loc_c &a_loc) const
     {/*{{{*/
       list_t &first = *static_cast<list_t *>(m_data_ptr);
       list_t &second = *static_cast<list_t *>(a_loc.m_data_ptr);
+
+      if (first.size() != second.size())
+      {
+        return first.size() < second.size() ? -1 : 1;
+      }
+
+      auto f_iter = first.begin();
+      auto s_iter = second.begin();
+
+      while (f_iter != first.end())
+      {
+        int result = (f_iter++)->compare(*s_iter++);
+        if (result != 0)
+        {
+          return result;
+        }
+      }
+
+      return 0;
+    }/*}}}*/
+  case type_set:
+    {/*{{{*/
+      set_t &first = *static_cast<set_t *>(m_data_ptr);
+      set_t &second = *static_cast<set_t *>(a_loc.m_data_ptr);
 
       if (first.size() != second.size())
       {
@@ -193,6 +220,22 @@ var_c var_c::copy() const
               ++s_iter)
       {
         target.push_back(s_iter->copy());
+      }
+
+      return res_value;
+    }/*}}}*/
+  case type_set:
+    {/*{{{*/
+      var_c res_value{set_t{}};
+
+      set_t &source = *static_cast<set_t *>(m_loc_ptr->m_data_ptr);
+      set_t &target = *static_cast<set_t *>(res_value.m_loc_ptr->m_data_ptr);
+
+      for (auto s_iter = source.begin();
+                s_iter != source.end();
+              ++s_iter)
+      {
+        target.insert(target.end(),s_iter->copy());
       }
 
       return res_value;
@@ -365,6 +408,26 @@ std::ostream &operator << (std::ostream &a_os,const loc_c &a_loc)
 
       for (auto var_i = list.begin();
                 var_i != list.end();
+              ++var_i)
+      {
+        a_os << (first ? '[' : ',') << *var_i;
+        first = false;
+      }
+      a_os << ']';
+    }/*}}}*/
+    break;
+  case type_set:
+    {/*{{{*/
+      bool first = true;
+      auto &set = *static_cast<set_t *>(a_loc.m_data_ptr);
+      if (set.empty())
+      {
+        a_os << "[]";
+        break;
+      }
+
+      for (auto var_i = set.begin();
+                var_i != set.end();
               ++var_i)
       {
         a_os << (first ? '[' : ',') << *var_i;

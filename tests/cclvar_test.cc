@@ -8,6 +8,7 @@
 using cclvar::var_c;
 using cclvar::string_t;
 using cclvar::array_t;
+using cclvar::set_t;
 using cclvar::list_t;
 using cclvar::dict_t;
 
@@ -231,6 +232,58 @@ void test_cclvar_array()
   assert(thrown);
 }/*}}}*/
 
+void test_cclvar_set()
+{/*{{{*/
+  std::stringbuf buffer;
+  std::ostream os(&buffer);
+
+  buffer.str({});
+  os << var_c{set_t{1,2,3,4,5}};
+  assert(buffer.str() == "[1,2,3,4,5]");
+
+  var_c set_0{set_t{1,2.5,"Hello",set_t{1,2,3},5}};
+  assert(set_0.type() == cclvar::type_set);
+  buffer.str({});
+  os << set_0;
+  assert(buffer.str() == "[1,5,2.5,Hello,[1,2,3]]");
+
+  buffer.str({});
+  set_t &set_ref = set_0.to_set();
+  set_ref.erase(set_t{1,2,3});
+  set_ref.insert(6);
+  set_ref.insert(7);
+  set_ref.insert(8);
+  os << set_0;
+  assert(buffer.str() == "[1,5,6,7,8,2.5,Hello]");
+
+  buffer.str({});
+  for (auto value_i = set_ref.begin();
+            value_i != set_ref.end();
+          ++value_i)
+  {
+    os << *value_i << ',';
+  }
+  assert(buffer.str() == "1,5,6,7,8,2.5,Hello,");
+
+  set_0 = set_t{array_t{1,2,3},1,2,3,4};
+  var_c set_1 = set_0.copy();
+  assert(set_0 == set_1);
+
+  set_1.to_set().insert(0);
+  assert(set_0 != set_1);
+
+  bool thrown = false;
+  try
+  {
+    (void)set_0.to_int();
+  }
+  catch (...)
+  {
+    thrown = true;
+  }
+  assert(thrown);
+}/*}}}*/
+
 void test_cclvar_list()
 {/*{{{*/
   std::stringbuf buffer;
@@ -420,6 +473,7 @@ void test_cclvar_all()
   test_cclvar_double();
   test_cclvar_string();
   test_cclvar_array();
+  test_cclvar_set();
   test_cclvar_list();
   test_cclvar_dict();
 }/*}}}*/
@@ -453,6 +507,10 @@ int main(int argc,char **argv)
       else if (std::string("array") == argv[arg_idx])
       {
         test_cclvar_array();
+      }
+      else if (std::string("set") == argv[arg_idx])
+      {
+        test_cclvar_set();
       }
       else if (std::string("list") == argv[arg_idx])
       {

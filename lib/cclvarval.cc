@@ -13,6 +13,7 @@ string_map_t validator_c::c_type_map
   {"float"  ,cclvar::type_float},
   {"string" ,cclvar::type_string},
   {"array"  ,cclvar::type_array},
+  {"set"    ,cclvar::type_set},
   {"list"   ,cclvar::type_list},
   {"dict"   ,cclvar::type_dict},
 };/*}}}*/
@@ -200,6 +201,9 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
         break;
       case cclvar::type_array:
         value_size = a_value.to_array().size();
+        break;
+      case cclvar::type_set:
+        value_size = a_value.to_set().size();
         break;
       case cclvar::type_list:
         value_size = a_value.to_list().size();
@@ -439,6 +443,40 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
           VALIDATE_PAIR_CALL(*item_i,prop_i->second,
             m_value_stack.push_back(item_i - value_arr.begin());
             m_props_stack.push_back(item_i - value_arr.begin());
+            m_props_stack.push_back("all-items");
+          );
+        }
+      }
+      break;
+      case cclvar::type_set:
+      {
+        cclvar::set_t &value_set = a_value.to_set();
+
+        size_t position = 0;
+        for (auto item_i = value_set.begin();
+                  item_i != value_set.end();
+                  ++item_i,++position)
+        {
+          VALIDATE_PAIR_CALL(*item_i,prop_i->second,
+            m_value_stack.push_back(position);
+            m_props_stack.push_back(position);
+            m_props_stack.push_back("all-items");
+          );
+        }
+      }
+      break;
+      case cclvar::type_list:
+      {
+        cclvar::list_t &value_lst = a_value.to_list();
+
+        size_t position = 0;
+        for (auto item_i = value_lst.begin();
+                  item_i != value_lst.end();
+                  ++item_i,++position)
+        {
+          VALIDATE_PAIR_CALL(*item_i,prop_i->second,
+            m_value_stack.push_back(position);
+            m_props_stack.push_back(position);
             m_props_stack.push_back("all-items");
           );
         }

@@ -5,6 +5,7 @@
 #include "cclbase.h"
 
 #include <iostream>
+#include <set>
 #include <list>
 #include <map>
 #include <sstream>
@@ -34,6 +35,7 @@ enum
   type_float,
   type_string,
   type_array,
+  type_set,
   type_list,
   type_dict,
 };/*}}}*/
@@ -58,6 +60,7 @@ union data_type_u
 
 typedef std::string string_t;
 typedef std::vector<var_c> array_t;
+typedef std::set<var_c> set_t;
 typedef std::list<var_c> list_t;
 typedef std::map<var_c,var_c> dict_t;
 typedef std::pair<var_c,var_c> dict_pair_t;
@@ -89,6 +92,7 @@ class loc_c
   loc_c(double a_val)   : m_type{type_float},   m_ref_cnt{1}, m_data_ptr{a_val} {} // NOLINT
   loc_c(string_t a_val) : m_type{type_string},  m_ref_cnt{1}, m_data_ptr{new string_t(std::move(a_val))} {} // NOLINT
   loc_c(array_t a_val)  : m_type{type_array},   m_ref_cnt{1}, m_data_ptr{new array_t(std::move(a_val))} {} // NOLINT
+  loc_c(set_t a_val)    : m_type{type_set},     m_ref_cnt{1}, m_data_ptr{new set_t(std::move(a_val))} {} // NOLINT
   loc_c(list_t a_val)   : m_type{type_list},    m_ref_cnt{1}, m_data_ptr{new list_t(std::move(a_val))} {} // NOLINT
   inline loc_c(dict_t a_val); // NOLINT
 
@@ -102,6 +106,7 @@ class loc_c
   operator double          () const { check_type(type_float);   return m_data_ptr; }
   operator const string_t &() const { check_type(type_string);  return *(static_cast<string_t *>(m_data_ptr)); }
   operator array_t &       () const { check_type(type_array);   return *(static_cast<array_t *>(m_data_ptr)); }
+  operator set_t &         () const { check_type(type_set);     return *(static_cast<set_t *>(m_data_ptr)); }
   operator list_t &        () const { check_type(type_list);    return *(static_cast<list_t *>(m_data_ptr)); }
   operator dict_t &        () const { check_type(type_dict);    return *(static_cast<dict_t *>(m_data_ptr)); }
 
@@ -138,6 +143,7 @@ class var_c
   var_c(string_t    a_val) : m_loc_ptr{new loc_c{std::move(a_val)}} {} // NOLINT
   var_c(const char *a_val); // NOLINT
   var_c(array_t     a_val) : m_loc_ptr{new loc_c{std::move(a_val)}} {} // NOLINT
+  var_c(set_t       a_val) : m_loc_ptr{new loc_c{std::move(a_val)}} {} // NOLINT
   var_c(list_t      a_val) : m_loc_ptr{new loc_c{std::move(a_val)}} {} // NOLINT
   var_c(dict_t      a_val) : m_loc_ptr{new loc_c{std::move(a_val)}} {} // NOLINT
 
@@ -166,6 +172,7 @@ class var_c
   double          to_float() const { return *m_loc_ptr; }
   const string_t &to_str  () const { return *m_loc_ptr; }
   array_t &       to_array() const { return *m_loc_ptr; }
+  set_t &         to_set  () const { return *m_loc_ptr; }
   list_t &        to_list () const { return *m_loc_ptr; }
   dict_t &        to_dict () const { return *m_loc_ptr; }
 

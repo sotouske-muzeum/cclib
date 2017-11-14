@@ -4,6 +4,7 @@
 using cclvar::var_c;
 using cclvar::string_t;
 using cclvar::array_t;
+using cclvar::set_t;
 using cclvar::list_t;
 using cclvar::dict_t;
 
@@ -132,6 +133,94 @@ void test_cclvarval_string()
 
   VALIDATE_CATCH_CHECK(val.validate(array_t{true,"world"});,error_VARVAL_INVALID_TYPE);
   VALIDATE_CATCH_CHECK(val.validate(array_t{"hello","hello world"});,error_VARVAL_INVALID_VALUE);
+}/*}}}*/
+
+void test_cclvarval_set()
+{/*{{{*/
+  cclvarval::validator_c val{dict_t
+  {/*{{{*/
+    dp_t{"root",dict_t{
+      dp_t{"type","array"},
+      dp_t{"items",dict_t{
+        dp_t{0,dict_t{
+          dp_t{"type","set"},
+          dp_t{"==",set_t{1,2,3}},
+        }},
+        dp_t{1,dict_t{
+          dp_t{"type","set"},
+          dp_t{"size ==",3},
+        }},
+        dp_t{2,dict_t{
+          dp_t{"type","set"},
+          dp_t{"all-items",dict_t{
+            dp_t{"type","integer"},
+          }},
+        }},
+      }},
+    }},
+  }};/*}}}*/
+
+  val.validate(array_t{set_t{1,2,3},set_t{1,2,3},set_t{1,2,3,1,2,3}});
+
+  VALIDATE_CATCH_CHECK(
+      val.validate(array_t{set_t{1,2,3},set_t{1,2,3},false});,
+      error_VARVAL_INVALID_TYPE);
+
+  VALIDATE_CATCH_CHECK(
+      val.validate(array_t{set_t{1,2,3,4},set_t{1,2,3},set_t{1,2,3}});,
+      error_VARVAL_INVALID_VALUE);
+
+  VALIDATE_CATCH_CHECK(
+      val.validate(array_t{set_t{1,2,3},set_t{1,2},set_t{1,2,3}});,
+      error_VARVAL_VALUE_INVALID_SIZE);
+
+  VALIDATE_CATCH_CHECK(
+      val.validate(array_t{set_t{1,2,3},set_t{1,2,3},set_t{1,2,3.0}});,
+      error_VARVAL_INVALID_TYPE);
+}/*}}}*/
+
+void test_cclvarval_list()
+{/*{{{*/
+  cclvarval::validator_c val{dict_t
+  {/*{{{*/
+    dp_t{"root",dict_t{
+      dp_t{"type","array"},
+      dp_t{"items",dict_t{
+        dp_t{0,dict_t{
+          dp_t{"type","list"},
+          dp_t{"==",list_t{1,2,3}},
+        }},
+        dp_t{1,dict_t{
+          dp_t{"type","list"},
+          dp_t{"size ==",3},
+        }},
+        dp_t{2,dict_t{
+          dp_t{"type","list"},
+          dp_t{"all-items",dict_t{
+            dp_t{"type","integer"},
+          }},
+        }},
+      }},
+    }},
+  }};/*}}}*/
+
+  val.validate(array_t{list_t{1,2,3},list_t{1,2,3},list_t{1,2,3}});
+
+  VALIDATE_CATCH_CHECK(
+      val.validate(array_t{list_t{1,2,3},list_t{1,2,3},false});,
+      error_VARVAL_INVALID_TYPE);
+
+  VALIDATE_CATCH_CHECK(
+      val.validate(array_t{list_t{1,2,3,4},list_t{1,2,3},list_t{1,2,3}});,
+      error_VARVAL_INVALID_VALUE);
+
+  VALIDATE_CATCH_CHECK(
+      val.validate(array_t{list_t{1,2,3},list_t{1,2},list_t{1,2,3}});,
+      error_VARVAL_VALUE_INVALID_SIZE);
+
+  VALIDATE_CATCH_CHECK(
+      val.validate(array_t{list_t{1,2,3},list_t{1,2,3},list_t{1,2,3.0}});,
+      error_VARVAL_INVALID_TYPE);
 }/*}}}*/
 
 void test_cclvarval_array()
@@ -423,6 +512,10 @@ void test_cclvarval_size()
   cclvar::var_c arr3{array_t{1,2,3}};
   cclvar::var_c arr4{array_t{1,2,3,4}};
 
+  cclvar::var_c set2{set_t{1,2}};
+  cclvar::var_c set3{set_t{1,2,3}};
+  cclvar::var_c set4{set_t{1,2,3,4}};
+
   cclvar::var_c lst2{list_t{1,2}};
   cclvar::var_c lst3{list_t{1,2,3}};
   cclvar::var_c lst4{list_t{1,2,3,4}};
@@ -449,6 +542,13 @@ void test_cclvarval_size()
   VALIDATE_CATCH_CHECK(val.validate(array_t{arr3,arr3,arr3,arr2,arr3,arr3});,error_VARVAL_VALUE_INVALID_SIZE);
   VALIDATE_CATCH_CHECK(val.validate(array_t{arr3,arr3,arr3,arr3,arr4,arr3});,error_VARVAL_VALUE_INVALID_SIZE);
   VALIDATE_CATCH_CHECK(val.validate(array_t{arr3,arr3,arr3,arr3,arr3,arr2});,error_VARVAL_VALUE_INVALID_SIZE);
+
+  VALIDATE_CATCH_CHECK(val.validate(array_t{set2,set3,set3,set3,set3,set3});,error_VARVAL_VALUE_INVALID_SIZE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{set3,set2,set3,set3,set3,set3});,error_VARVAL_VALUE_INVALID_SIZE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{set3,set3,set4,set3,set3,set3});,error_VARVAL_VALUE_INVALID_SIZE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{set3,set3,set3,set2,set3,set3});,error_VARVAL_VALUE_INVALID_SIZE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{set3,set3,set3,set3,set4,set3});,error_VARVAL_VALUE_INVALID_SIZE);
+  VALIDATE_CATCH_CHECK(val.validate(array_t{set3,set3,set3,set3,set3,set2});,error_VARVAL_VALUE_INVALID_SIZE);
 
   VALIDATE_CATCH_CHECK(val.validate(array_t{lst2,lst3,lst3,lst3,lst3,lst3});,error_VARVAL_VALUE_INVALID_SIZE);
   VALIDATE_CATCH_CHECK(val.validate(array_t{lst3,lst2,lst3,lst3,lst3,lst3});,error_VARVAL_VALUE_INVALID_SIZE);
@@ -496,6 +596,8 @@ void test_cclvarval_all()
   test_cclvarval_integer();
   test_cclvarval_float();
   test_cclvarval_string();
+  test_cclvarval_set();
+  test_cclvarval_list();
   test_cclvarval_array();
   test_cclvarval_dict();
   test_cclvarval_ref();
@@ -529,6 +631,14 @@ int main(int argc,char **argv)
       else if (std::string("string") == argv[arg_idx])
       {
         test_cclvarval_string();
+      }
+      else if (std::string("set") == argv[arg_idx])
+      {
+        test_cclvarval_set();
+      }
+      else if (std::string("list") == argv[arg_idx])
+      {
+        test_cclvarval_list();
       }
       else if (std::string("array") == argv[arg_idx])
       {
