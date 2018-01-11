@@ -209,7 +209,6 @@ cclcrypto_c::cclcrypto_c() throw()
 {/*{{{*/
   ERR_load_crypto_strings();
   OpenSSL_add_all_algorithms();
-  OPENSSL_config(nullptr);
 }/*}}}*/
 
 cclcrypto_c::~cclcrypto_c()
