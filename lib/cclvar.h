@@ -52,10 +52,10 @@ union data_type_u
   data_type_u(double a_double)             : m_double{a_double} {} // NOLINT
   template <class T> data_type_u(T* a_ptr) : m_ptr{a_ptr}       {} // NOLINT
 
-  operator bool                  () const { return static_cast<bool>(m_int64); }
-  operator int64_t               () const { return m_int64; }
-  operator double                () const { return m_double; }
-  template <class T> operator T* () const { return static_cast<T *>(m_ptr); }
+  operator bool                  () const { return static_cast<bool>(m_int64); } // NOLINT
+  operator int64_t               () const { return m_int64; }                    // NOLINT
+  operator double                () const { return m_double; }                   // NOLINT
+  template <class T> operator T* () const { return static_cast<T *>(m_ptr); }    // NOLINT
 };/*}}}*/
 
 typedef std::string string_t;
@@ -101,14 +101,14 @@ class loc_c
   loc_c &ref() { __sync_add_and_fetch(&m_ref_cnt,1); return *this; }
   void unref() { if (__sync_sub_and_fetch(&m_ref_cnt,1) == 0) { delete this; } }
 
-  operator bool            () const { check_type(type_bool);    return m_data_ptr; }
-  operator int64_t         () const { check_type(type_integer); return m_data_ptr; }
-  operator double          () const { check_type(type_float);   return m_data_ptr; }
-  operator const string_t &() const { check_type(type_string);  return *(static_cast<string_t *>(m_data_ptr)); }
-  operator array_t &       () const { check_type(type_array);   return *(static_cast<array_t *>(m_data_ptr)); }
-  operator set_t &         () const { check_type(type_set);     return *(static_cast<set_t *>(m_data_ptr)); }
-  operator list_t &        () const { check_type(type_list);    return *(static_cast<list_t *>(m_data_ptr)); }
-  operator dict_t &        () const { check_type(type_dict);    return *(static_cast<dict_t *>(m_data_ptr)); }
+  operator bool            () const { check_type(type_bool);    return m_data_ptr; }                             // NOLINT
+  operator int64_t         () const { check_type(type_integer); return m_data_ptr; }                             // NOLINT
+  operator double          () const { check_type(type_float);   return m_data_ptr; }                             // NOLINT
+  operator const string_t &() const { check_type(type_string);  return *(static_cast<string_t *>(m_data_ptr)); } // NOLINT
+  operator array_t &       () const { check_type(type_array);   return *(static_cast<array_t *>(m_data_ptr)); }  // NOLINT
+  operator set_t &         () const { check_type(type_set);     return *(static_cast<set_t *>(m_data_ptr)); }    // NOLINT
+  operator list_t &        () const { check_type(type_list);    return *(static_cast<list_t *>(m_data_ptr)); }   // NOLINT
+  operator dict_t &        () const { check_type(type_dict);    return *(static_cast<dict_t *>(m_data_ptr)); }   // NOLINT
 
   int type() const { return m_type; }
   int compare_value(const loc_c &a_loc) const;

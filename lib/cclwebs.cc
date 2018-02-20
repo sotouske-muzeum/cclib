@@ -16,10 +16,10 @@ namespace cclwebs {
     case LWS_CALLBACK_DEL_POLL_FD:
     case LWS_CALLBACK_CHANGE_MODE_POLL_FD:
       {
-        context_c *wsc_ptr = static_cast<context_c *>(libwebsocket_context_user(ctx));
+        auto wsc_ptr = static_cast<context_c *>(libwebsocket_context_user(ctx));
         pollfd_set_t &pfd_set = wsc_ptr->m_pfd_set;
 
-        libwebsocket_pollargs *args_ptr = static_cast<libwebsocket_pollargs *>(in);
+        auto args_ptr = static_cast<libwebsocket_pollargs *>(in);
         pollfd pfd{args_ptr->fd,static_cast<int16_t>(args_ptr->events),0};
 
         switch (reason)
@@ -70,7 +70,7 @@ int context_c::protocol_func(libwebsocket_context *ctx,libwebsocket *wsi,
     case LWS_CALLBACK_CLIENT_WRITEABLE:
     case LWS_CALLBACK_SERVER_WRITEABLE:
       {
-        context_c *wsc_ptr = static_cast<context_c *>(libwebsocket_context_user(ctx));
+        auto wsc_ptr = static_cast<context_c *>(libwebsocket_context_user(ctx));
 
         if (wsc_ptr->m_exc_ptr == nullptr)
         {
@@ -118,7 +118,7 @@ int context_c::protocol_func(libwebsocket_context *ctx,libwebsocket *wsi,
           // - message is not complete or buffered data exists -
           if (remaining != 0 || !data_buffer.empty())
           {
-            const char *char_in = static_cast<const char *>(in);
+            auto char_in = static_cast<const char *>(in);
 
             data_buffer.reserve(len + remaining);
             data_buffer.insert(data_buffer.end(),char_in,char_in + len);
@@ -177,7 +177,7 @@ int context_c::protocol_func(libwebsocket_context *ctx,libwebsocket *wsi,
   return 0;
 }/*}}}*/
 
-context_c::context_c(int a_port,const prot_descrs_t a_prot_descrs) :
+context_c::context_c(int a_port,const prot_descrs_t &a_prot_descrs) :
   m_context{nullptr}, m_user_data{nullptr}
 {/*{{{*/
   m_exc_ptr = nullptr;

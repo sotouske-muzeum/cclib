@@ -55,16 +55,15 @@ class validator_c
   cclvar::array_t m_value_stack;
   cclvar::array_t m_props_stack;
 
-  void validate_pair(cclvar::var_c a_value,cclvar::var_c a_props);
+  void validate_pair(const cclvar::var_c &a_value,const cclvar::var_c &a_props);
 
   public:
   validator_c(const validator_c &) = delete;
   void operator = (const validator_c &) = delete;
-  explicit validator_c(cclvar::var_c a_schema) :
-    m_schema{a_schema}, m_regex_map{}, m_value_stack{}, m_props_stack{} {};
+  explicit validator_c(const cclvar::var_c &a_schema) : m_schema{a_schema} {};
   ~validator_c();
 
-  void validate(cclvar::var_c a_value);
+  void validate(const cclvar::var_c &a_value);
   inline cclvar::var_c value_stack();
   inline cclvar::var_c props_stack();
 };

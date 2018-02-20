@@ -48,14 +48,13 @@ class xml_node_c
   std::vector<xml_attr_c> m_attrs;
   std::vector<xml_node_c> m_nodes;
 
-  xml_node_c();
-
-  void attr(const std::string a_name,const std::string a_value);
+  void attr(const std::string &a_name,const std::string &a_value);
 
   public:
   explicit xml_node_c(std::string a_name,std::string a_text = "",bool a_self_close = true) :
     m_self_close{a_self_close}, m_name(std::move(a_name)), m_text(std::move(a_text)) {}
 
+  xml_node_c() = delete;
   xml_node_c(const xml_node_c &) = delete;
   xml_node_c(xml_node_c &&a_xml_node) throw() :
     m_self_close(a_xml_node.m_self_close),
@@ -74,11 +73,11 @@ class xml_node_c
     return *this;
   }/*}}}*/
 
-  xml_node_c &node(const std::string a_name,const std::string a_text = "",bool a_self_close = true);
+  xml_node_c &node(const std::string &a_name,const std::string &a_text = "",bool a_self_close = true);
 
   xml_node_c &move_node(xml_node_c &&a_node) throw();
 
-  xml_node_c &attr_(const std::string a_name,const std::string a_value)
+  xml_node_c &attr_(const std::string &a_name,const std::string &a_value)
   {/*{{{*/
     attr(a_name,a_value);
     return *this;

@@ -12,13 +12,13 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <poll.h>
-#include <signal.h>
+#include <csignal>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <time.h>
+#include <ctime>
 #include <unistd.h>
 
 namespace cclsys {
@@ -68,10 +68,10 @@ typedef void (*signal_handler_t)(int);
 void install_signals(signal_handler_t a_handler);
 pid_t execute(const std::vector<std::string> &a_args);
 int64_t sleep(int64_t a_delay);
-int64_t file_size(const std::string a_file_name);
+int64_t file_size(const std::string &a_file_name);
 std::string hostname();
-void setenv(const std::string a_name,const std::string a_value);
-std::string getenv(const std::string a_name);
+void setenv(const std::string &a_name,const std::string &a_value);
+std::string getenv(const std::string &a_name);
 
 class pid_c
 {/*{{{*/

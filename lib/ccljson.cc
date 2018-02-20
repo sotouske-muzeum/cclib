@@ -478,8 +478,8 @@ uint32_t parser_c::recognize_terminal(uint32_t &a_input_idx)
 {/*{{{*/
 
 #define JSON_GET_NEXT_CHAR() \
-  if (a_input_idx < m_source.length()) {\
-    in_char = static_cast<uint8_t>(m_source[a_input_idx]);\
+  if (a_input_idx < m_source->length()) {\
+    in_char = static_cast<uint8_t>((*m_source)[a_input_idx]);\
   }\
   else {\
     in_char = '\0';\

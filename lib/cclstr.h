@@ -12,7 +12,7 @@
 #include <vector>
 
 #include <regex.h>
-#include <stdarg.h>
+#include <cstdarg>
 
 namespace cclstr {
 

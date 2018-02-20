@@ -48,7 +48,7 @@ class create_elem_c
   dict_iter_t dict_i;
 
   public:
-  explicit create_elem_c(var_c a_var) : m_var{a_var}, m_init{true} {}
+  explicit create_elem_c(const var_c &a_var) : m_var{a_var}, m_init{true} {}
 };/*}}}*/
 
 class stack_elem_c
@@ -77,7 +77,7 @@ class parser_c
   typedef std::map<string_t,var_c> string_map_t;
 
   private:
-  const std::string &m_source;
+  const std::string *m_source;
 
   uint32_t m_old_input_idx;
   lalr_stack_t m_lalr_stack;
@@ -114,7 +114,7 @@ class parser_c
 
   public:
   explicit parser_c(const std::string &a_source) :
-    m_source(a_source), m_var_true(true), m_var_false(false) {}
+    m_source(&a_source), m_var_true(true), m_var_false(false) {}
   uint32_t recognize_terminal(uint32_t &a_input_idx);
   var_c parse_source();
 };/*}}}*/

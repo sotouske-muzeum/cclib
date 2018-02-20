@@ -3,7 +3,7 @@
 
 namespace cclcrypto {
 
-std::string digest(const std::string a_data,const EVP_MD *a_md)
+std::string digest(const std::string &a_data,const EVP_MD *a_md)
 {/*{{{*/
   EVP_MD_CTX *md_ctx;
 
@@ -56,30 +56,30 @@ std::string random(size_t a_size)
   return std::string(reinterpret_cast<char *>(buffer),a_size);
 }/*}}}*/
 
-std::string passwd_create(const std::string a_passwd,const EVP_MD *a_md)
+std::string passwd_create(const std::string &a_passwd,const EVP_MD *a_md)
 {/*{{{*/
   std::string salt = random(EVP_MD_size(a_md));
   return salt + digest(salt + a_passwd,a_md);
 }/*}}}*/
 
-std::string passwd_create_base16(const std::string a_passwd,const EVP_MD *a_md)
+std::string passwd_create_base16(const std::string &a_passwd,const EVP_MD *a_md)
 {/*{{{*/
   return base16_encode(passwd_create(a_passwd,a_md));
 }/*}}}*/
 
-bool passwd_verify(const std::string a_passwd,const std::string a_hash,const EVP_MD *a_md)
+bool passwd_verify(const std::string &a_passwd,const std::string &a_hash,const EVP_MD *a_md)
 {/*{{{*/
   std::string salt = a_hash.substr(0,EVP_MD_size(a_md));
   return a_hash.compare(EVP_MD_size(a_md),EVP_MD_size(a_md),
       digest(salt + a_passwd,a_md)) == 0;
 }/*}}}*/
 
-bool passwd_verify_base16(const std::string a_passwd,const std::string a_hash,const EVP_MD *a_md)
+bool passwd_verify_base16(const std::string &a_passwd,const std::string &a_hash,const EVP_MD *a_md)
 {/*{{{*/
   return passwd_verify(a_passwd,base16_decode(a_hash),a_md);
 }/*}}}*/
 
-std::string base16_encode(const std::string a_data)
+std::string base16_encode(const std::string &a_data)
 {/*{{{*/
   std::string result;
   result.reserve(a_data.length() << 1);
@@ -88,7 +88,7 @@ std::string base16_encode(const std::string a_data)
             char_i != a_data.end();
           ++char_i)
   {
-    unsigned char ch = static_cast<unsigned char>(*char_i);
+    auto ch = static_cast<unsigned char>(*char_i);
     result += c_base16_map[ch >> 4];
     result += c_base16_map[ch & 0x0f];
   }
@@ -96,7 +96,7 @@ std::string base16_encode(const std::string a_data)
   return result;
 }/*}}}*/
 
-std::string base16_decode(const std::string a_data)
+std::string base16_decode(const std::string &a_data)
 {/*{{{*/
 
   // - ERROR -
@@ -162,16 +162,16 @@ std::string base16_decode(const std::string a_data)
   return result;
 }/*}}}*/
 
-std::string base64_encode(const std::string a_data)
+std::string base64_encode(const std::string &a_data)
 {/*{{{*/
   std::string result;
   result.resize(((a_data.length()/3 + 1) << 2) + 1);
 
-  unsigned char *trg_buffer = 
+  auto *trg_buffer = 
     reinterpret_cast<unsigned char *>(
         const_cast<char *>(result.data()));
 
-  const unsigned char *src_buffer = 
+  auto *src_buffer = 
     reinterpret_cast<const unsigned char *>(a_data.data());
 
   int length = EVP_EncodeBlock(trg_buffer,src_buffer,a_data.length());
@@ -180,16 +180,16 @@ std::string base64_encode(const std::string a_data)
   return result;
 }/*}}}*/
 
-std::string base64_decode(const std::string a_data)
+std::string base64_decode(const std::string &a_data)
 {/*{{{*/
   std::string result;
   result.resize(((a_data.length() >> 2) * 3) + 1);
 
-  unsigned char *trg_buffer = 
+  auto *trg_buffer = 
     reinterpret_cast<unsigned char *>(
         const_cast<char *>(result.data()));
 
-  const unsigned char *src_buffer = 
+  auto *src_buffer = 
     reinterpret_cast<const unsigned char *>(a_data.data());
 
   int length = EVP_DecodeBlock(trg_buffer,src_buffer,a_data.length());
@@ -213,9 +213,9 @@ cclcrypto_c::cclcrypto_c() throw()
 
 cclcrypto_c::~cclcrypto_c()
 {/*{{{*/
-  EVP_cleanup();
-  CRYPTO_cleanup_all_ex_data();
-  ERR_free_strings();
+  EVP_cleanup(); // NOLINT
+  CRYPTO_cleanup_all_ex_data(); // NOLINT
+  ERR_free_strings(); // NOLINT
 }/*}}}*/
 
 // - crypto global init object -

@@ -30,7 +30,7 @@ void test_cclvar_blank()
   os << blank_0;
   assert(buffer.str() == "<blank>");
 
-  var_c blank_1 = blank_0;
+  var_c blank_1 = blank_0; // NOLINT
   buffer.str({});
   os << blank_1;
   assert(buffer.str() == "<blank>");
@@ -311,8 +311,8 @@ void test_cclvar_list()
   list_ref.push_front(1);
   list_ref.push_front(2);
   list_ref.push_front(3);
-  list_ref.push_back(4);
-  list_ref.push_back(5);
+  list_ref.emplace_back(4);
+  list_ref.emplace_back(5);
 
   buffer.str({});
   os << list_0;

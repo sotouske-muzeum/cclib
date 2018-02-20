@@ -9,7 +9,7 @@ size_t cb_write_buffer(void *ptr,size_t size,size_t nmemb,void *stream)
 {/*{{{*/
   (void)size;
 
-  std::stringbuf *buff_ptr = static_cast<std::stringbuf *>(stream);
+  auto buff_ptr = static_cast<std::stringbuf *>(stream);
   buff_ptr->sputn(static_cast<const char *>(ptr),nmemb);
 
   return nmemb;
@@ -19,7 +19,7 @@ size_t cb_read_buffer(void *ptr,size_t size,size_t nmemb,void *stream)
 {/*{{{*/
   (void)size;
 
-  std::stringbuf *buff_ptr = static_cast<std::stringbuf *>(stream);
+  auto buff_ptr = static_cast<std::stringbuf *>(stream);
 
   // - retrieve count of available characters -
   auto avail = buff_ptr->in_avail();

@@ -56,7 +56,7 @@ bool parser_c::pa_json_null(parser_c &_this)
 
 bool parser_c::pa_json_object_begin(parser_c &_this)
 {/*{{{*/
-  _this.m_objects.push_back(dict_t{});
+  _this.m_objects.emplace_back(dict_t{});
   return true;
 }/*}}}*/
 
@@ -73,7 +73,7 @@ bool parser_c::pa_json_object_pair(parser_c &_this)
 
 bool parser_c::pa_json_array_begin(parser_c &_this)
 {/*{{{*/
-  _this.m_arrays.push_back(array_t{});
+  _this.m_arrays.emplace_back(array_t{});
   return true;
 }/*}}}*/
 
@@ -96,7 +96,7 @@ bool parser_c::pa_json_val_string(parser_c &_this)
 bool parser_c::pa_json_val_integer(parser_c &_this)
 {/*{{{*/
   stack_elem_c &lse = _this.m_lalr_stack.back();
-  const char *int_num_data = _this.m_source.data() + lse.m_term_start;
+  const char *int_num_data = _this.m_source->data() + lse.m_term_start;
 
   // - retrieve number from string -
   int64_t const_int = strtoll(int_num_data,nullptr,10);
@@ -115,7 +115,7 @@ bool parser_c::pa_json_val_integer(parser_c &_this)
 bool parser_c::pa_json_val_float(parser_c &_this)
 {/*{{{*/
   stack_elem_c &lse = _this.m_lalr_stack.back();
-  const char *float_num_data = _this.m_source.data() + lse.m_term_start;
+  const char *float_num_data = _this.m_source->data() + lse.m_term_start;
 
   // - retrieve number from string -
   double const_float = strtod(float_num_data,nullptr);
@@ -169,8 +169,8 @@ bool parser_c::pa_json_string(parser_c &_this)
 {/*{{{*/
   stack_elem_c &lse = _this.m_lalr_stack.back();
 
-  auto iter = _this.m_source.data() + lse.m_term_start + 1;
-  auto iter_end = _this.m_source.data() + lse.m_term_end - 1;
+  auto iter = _this.m_source->data() + lse.m_term_start + 1;
+  auto iter_end = _this.m_source->data() + lse.m_term_end - 1;
 
   std::string const_str;
   const_str.reserve(iter_end - iter);
@@ -217,18 +217,18 @@ bool parser_c::pa_json_string(parser_c &_this)
           // - convert utf16/32 value to utf8 character string -
           if (value <= 0x7f)
           {
-            const_str += value;
+            const_str += static_cast<char>(value);
           }
           else if (value <= 0x7ff)
           {
-            const_str += 0xc0 | value >> 6;
-            const_str += 0x80 | (value & 0x3f);
+            const_str += static_cast<char>(0xc0 | value >> 6);
+            const_str += static_cast<char>(0x80 | (value & 0x3f));
           }
           else if (value <= 0xffff)
           {
-            const_str += 0xe0 |   value >> 12;
-            const_str += 0x80 | ((value >>  6) & 0x3f);
-            const_str += 0x80 |  (value        & 0x3f);
+            const_str += static_cast<char>(0xe0 |   value >> 12);
+            const_str += static_cast<char>(0x80 | ((value >>  6) & 0x3f));
+            const_str += static_cast<char>(0x80 |  (value        & 0x3f));
           }
         }
         else

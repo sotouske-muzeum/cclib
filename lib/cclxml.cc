@@ -9,13 +9,13 @@ std::ostream &operator << (std::ostream &a_out,const xml_attr_c &a_this)
   return a_out;
 }/*}}}*/
 
-void xml_node_c::attr(const std::string a_name,const std::string a_value)
+void xml_node_c::attr(const std::string &a_name,const std::string &a_value)
 {/*{{{*/
   m_attrs.emplace_back(a_name,a_value);
 }/*}}}*/
 
 xml_node_c &xml_node_c::node(
-  const std::string a_name,const std::string a_text,bool a_self_close)
+  const std::string &a_name,const std::string &a_text,bool a_self_close)
 {/*{{{*/
   m_nodes.emplace_back(a_name,a_text,a_self_close);
   return m_nodes.back();

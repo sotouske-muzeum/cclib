@@ -31,7 +31,7 @@ int server_c::connection_func(void *cls,struct MHD_Connection *connection,
     const char *url,const char *method,const char *version,
     const char *upload_data,size_t *upload_data_size,void **con_cls)
 {/*{{{*/
-  server_c *srv_ptr = static_cast<server_c *>(cls);
+  auto srv_ptr = static_cast<server_c *>(cls);
 
   // - connection pointer -
   connection_c *conn_ptr;
@@ -143,10 +143,10 @@ void server_c::completed_func(void *cls,struct MHD_Connection *connection,
 {/*{{{*/
   (void)connection;(void)toe;
 
-  server_c *srv_ptr = static_cast<server_c *>(cls);
+  auto srv_ptr = static_cast<server_c *>(cls);
 
   // - retrieve connection object -
-  connection_c *conn_ptr = static_cast<connection_c *>(*con_cls);
+  auto conn_ptr = static_cast<connection_c *>(*con_cls);
 
   // - call callback - 
   srv_ptr->m_completed_cb(*conn_ptr);
@@ -162,9 +162,9 @@ server_c &server_c::retrieve_poll_fds(std::vector<pollfd> &a_poll_fds)
 {/*{{{*/
 
   // - prepare file descriptor sets -
-  fd_set rs; FD_ZERO(&rs);
-  fd_set ws; FD_ZERO(&ws);
-  fd_set es; FD_ZERO(&es);
+  fd_set rs; FD_ZERO(&rs); // NOLINT
+  fd_set ws; FD_ZERO(&ws); // NOLINT
+  fd_set es; FD_ZERO(&es); // NOLINT
 
   // - ERROR -
   int max_fd = 0;

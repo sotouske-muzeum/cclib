@@ -81,7 +81,7 @@ class context_c
   public:
   context_c(const context_c &) = delete;
   void operator = (const context_c &) = delete;
-  context_c(int a_port,const prot_descrs_t a_prot_descrs);
+  context_c(int a_port,const prot_descrs_t &a_prot_descrs);
   ~context_c();
 
   static std::string version() { return lws_get_library_version(); };
@@ -132,9 +132,9 @@ class client_c
   friend class context_c;
 
   private:
-  context_c *m_wsc_ptr;
-  libwebsocket *m_ws_ptr;
-  client_c **m_wscl_udp_ptr;
+  context_c *m_wsc_ptr;      // NOLINT
+  libwebsocket *m_ws_ptr;    // NOLINT
+  client_c **m_wscl_udp_ptr; // NOLINT
   bool m_connected;
 
   client_c(context_c &a_ctx,const std::string a_addr,int a_port,const std::string a_path,const std::string a_prot);

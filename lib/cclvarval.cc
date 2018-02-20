@@ -49,8 +49,8 @@ string_map_t validator_c::c_prop_map
     try { validate_pair(VALUE,ref); }\
     catch (...)\
     {\
-      m_props_stack.push_back(PROPS_REF);\
-      m_props_stack.push_back("ref");\
+      m_props_stack.emplace_back(PROPS_REF);\
+      m_props_stack.emplace_back("ref");\
       \
       INVALID_CODE;\
       std::rethrow_exception(std::current_exception());\
@@ -59,8 +59,8 @@ string_map_t validator_c::c_prop_map
   /* - ERROR - */\
   else\
   {\
-    m_props_stack.push_back(PROPS_REF);\
-    m_props_stack.push_back("ref");\
+    m_props_stack.emplace_back(PROPS_REF);\
+    m_props_stack.emplace_back("ref");\
     \
     INVALID_CODE;\
     cclthrow(error_VARVAL_INVALID_SCHEMA_REFERENCE);\
@@ -84,7 +84,7 @@ string_map_t validator_c::c_prop_map
   }\
 }/*}}}*/
 
-void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
+void validator_c::validate_pair(const cclvar::var_c &a_value,const cclvar::var_c &a_props)
 {/*{{{*/
   cclvar::dict_t &props_dict = a_props.to_dict();
 
@@ -108,11 +108,9 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
         VALIDATE_PAIR_REFERENCE(a_value,prop_i->second,);
         continue;
       }
-      else
-      {
-        m_props_stack.push_back(prop_i->first.to_str());
-        cclthrow(error_VARVAL_INVALID_SCHEMA_PROPERTY);
-      }
+
+      m_props_stack.emplace_back(prop_i->first.to_str());
+      cclthrow(error_VARVAL_INVALID_SCHEMA_PROPERTY);
     }
 
     switch (prop_id)
@@ -320,17 +318,17 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
           // - ERROR -
           if (index < 0 || index >= value_arr.size())
           {
-            m_value_stack.push_back(index_i->first);
-            m_props_stack.push_back(index_i->first);
-            m_props_stack.push_back("items");
+            m_value_stack.emplace_back(index_i->first);
+            m_props_stack.emplace_back(index_i->first);
+            m_props_stack.emplace_back("items");
 
             cclthrow(error_VARVAL_ARRAY_INVALID_SIZE);
           }
 
           VALIDATE_PAIR_CALL(value_arr[index],index_i->second,
-            m_value_stack.push_back(index_i->first);
-            m_props_stack.push_back(index_i->first);
-            m_props_stack.push_back("items");
+            m_value_stack.emplace_back(index_i->first);
+            m_props_stack.emplace_back(index_i->first);
+            m_props_stack.emplace_back("items");
           );
         }
       }
@@ -347,17 +345,17 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
           cclvar::var_c key_value;
           if (!a_value.has_key(key_i->first,key_value))
           {
-            m_value_stack.push_back(key_i->first);
-            m_props_stack.push_back(key_i->first);
-            m_props_stack.push_back("items");
+            m_value_stack.emplace_back(key_i->first);
+            m_props_stack.emplace_back(key_i->first);
+            m_props_stack.emplace_back("items");
 
             cclthrow(error_VARVAL_DICT_MISSING_KEY);
           }
 
           VALIDATE_PAIR_CALL(key_value,key_i->second,
-            m_value_stack.push_back(key_i->first);
-            m_props_stack.push_back(key_i->first);
-            m_props_stack.push_back("items");
+            m_value_stack.emplace_back(key_i->first);
+            m_props_stack.emplace_back(key_i->first);
+            m_props_stack.emplace_back("items");
           );
         }
       }
@@ -386,9 +384,9 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
           if (a_value.has_key(key_i->first,key_value))
           {
             VALIDATE_PAIR_CALL(key_value,key_i->second,
-              m_value_stack.push_back(key_i->first);
-              m_props_stack.push_back(key_i->first);
-              m_props_stack.push_back("opt-items");
+              m_value_stack.emplace_back(key_i->first);
+              m_props_stack.emplace_back(key_i->first);
+              m_props_stack.emplace_back("opt-items");
             );
           }
         }
@@ -414,9 +412,9 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
                 ++pair_i)
         {
           VALIDATE_PAIR_CALL(pair_i->first,prop_i->second,
-            m_value_stack.push_back(pair_i->first);
-            m_props_stack.push_back(pair_i->first);
-            m_props_stack.push_back("all-keys");
+            m_value_stack.emplace_back(pair_i->first);
+            m_props_stack.emplace_back(pair_i->first);
+            m_props_stack.emplace_back("all-keys");
           );
         }
       }
@@ -441,9 +439,9 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
                   ++item_i)
         {
           VALIDATE_PAIR_CALL(*item_i,prop_i->second,
-            m_value_stack.push_back(item_i - value_arr.begin());
-            m_props_stack.push_back(item_i - value_arr.begin());
-            m_props_stack.push_back("all-items");
+            m_value_stack.emplace_back(item_i - value_arr.begin());
+            m_props_stack.emplace_back(item_i - value_arr.begin());
+            m_props_stack.emplace_back("all-items");
           );
         }
       }
@@ -458,9 +456,9 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
                   ++item_i,++position)
         {
           VALIDATE_PAIR_CALL(*item_i,prop_i->second,
-            m_value_stack.push_back(position);
-            m_props_stack.push_back(position);
-            m_props_stack.push_back("all-items");
+            m_value_stack.emplace_back(position);
+            m_props_stack.emplace_back(position);
+            m_props_stack.emplace_back("all-items");
           );
         }
       }
@@ -475,9 +473,9 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
                   ++item_i,++position)
         {
           VALIDATE_PAIR_CALL(*item_i,prop_i->second,
-            m_value_stack.push_back(position);
-            m_props_stack.push_back(position);
-            m_props_stack.push_back("all-items");
+            m_value_stack.emplace_back(position);
+            m_props_stack.emplace_back(position);
+            m_props_stack.emplace_back("all-items");
           );
         }
       }
@@ -491,9 +489,9 @@ void validator_c::validate_pair(cclvar::var_c a_value,cclvar::var_c a_props)
                   ++pair_i)
         {
           VALIDATE_PAIR_CALL(pair_i->second,prop_i->second,
-            m_value_stack.push_back(pair_i->first);
-            m_props_stack.push_back(pair_i->first);
-            m_props_stack.push_back("all-items");
+            m_value_stack.emplace_back(pair_i->first);
+            m_props_stack.emplace_back(pair_i->first);
+            m_props_stack.emplace_back("all-items");
           );
         }
       }
@@ -524,7 +522,7 @@ validator_c::~validator_c()
   }
 }/*}}}*/
 
-void validator_c::validate(cclvar::var_c a_value)
+void validator_c::validate(const cclvar::var_c &a_value)
 {/*{{{*/
   m_value_stack = cclvar::array_t{};
   m_props_stack = cclvar::array_t{};
@@ -536,7 +534,7 @@ void validator_c::validate(cclvar::var_c a_value)
   }
   catch (std::exception &e)
   {
-    m_props_stack.push_back("root");
+    m_props_stack.emplace_back("root");
 
     // - reverse values and props stacks -
     std::reverse(m_value_stack.begin(),m_value_stack.end());

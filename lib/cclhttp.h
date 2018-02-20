@@ -147,12 +147,13 @@ class post_proc_c
   size_t m_upload_size;
   FILE *m_file;
 
-  post_proc_c(const post_proc_c &) = delete;
   post_proc_c(MHD_Connection *a_conn_ptr,const std::string &a_file_name);
-  void operator = (const post_proc_c &) = delete;
   int post_callback(const char *key,const char *data,size_t size);
 
   public:
+  post_proc_c(const post_proc_c &) = delete;
+  void operator = (const post_proc_c &) = delete;
+
   ~post_proc_c();
   static int cb_post_callback(void *coninfo_cls,enum MHD_ValueKind kind,
       const char *key,const char *filename,const char *content_type,

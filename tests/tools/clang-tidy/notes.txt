@@ -1,10 +1,26 @@
 
 # - CLANG-TIDY - source code checker -
 
+ENABLED_CHECKS='misc-*,google-*,modernize-*,performance-*,readability-*,cert-*,llvm-*'
+DISABLED_CHECKS="\
+-readability-avoid-const-params-in-decls\
+,-readability-redundant-declaration\
+,-readability-delete-null-pointer\
+,-modernize-use-using\
+,-modernize-loop-convert\
+,-modernize-raw-string-literal\
+,-google-runtime-references\
+,-llvm-header-guard\
+,-llvm-include-order\
+,-misc-noexcept-move-constructor\
+,-cert-err58-cpp\
+,-cert-env33-c\
+"
+
 # - clang tidy all checks -
-clang-tidy -checks='misc-*,google-*,modernize-*,performance-*,readability-*,cert-*,llvm-*,-llvm-header-guard,-misc-noexcept-move-constructor,-modernize-loop-convert' ../src/*.cc -header-filter='ccl.*' > check.log
-clang-tidy -checks='misc-*,google-*,modernize-*,performance-*,readability-*,cert-*,llvm-*,-llvm-header-guard,-misc-noexcept-move-constructor,-modernize-loop-convert' ../lib/*.cc -header-filter='ccl.*' > check.log
-clang-tidy -checks='misc-*,google-*,modernize-*,performance-*,readability-*,cert-*,llvm-*,-llvm-header-guard,-misc-noexcept-move-constructor,-modernize-loop-convert' ../tests/*.cc -header-filter='ccl.*' > check.log
+clang-tidy "-checks=$ENABLED_CHECKS,$DISABLED_CHECKS" ../src/*.cc -header-filter='ccl.*' > check.log
+clang-tidy "-checks=$ENABLED_CHECKS,$DISABLED_CHECKS" ../lib/*.cc -header-filter='ccl.*' > check.log
+clang-tidy "-checks=$ENABLED_CHECKS,$DISABLED_CHECKS" ../tests/*.cc -header-filter='ccl.*' > check.log
 
 clang-tidy -checks='modernize-*' ../lib/*.cc -header-filter='ccl.*' > check.log
 clang-tidy -checks='misc-*' ../lib/*.cc -header-filter='ccl.*' > check.log

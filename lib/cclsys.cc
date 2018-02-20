@@ -91,10 +91,10 @@ int64_t sleep(int64_t a_delay)
     return 0;
   }
 
-  return (rest_ts.tv_sec * 1000) + (rest_ts.tv_nsec / 1000);
+  return (static_cast<int64_t>(rest_ts.tv_sec) * 1000) + (rest_ts.tv_nsec / 1000);
 }/*}}}*/
 
-int64_t file_size(const std::string a_file_name)
+int64_t file_size(const std::string &a_file_name)
 {/*{{{*/
 
   // - ERROR -
@@ -121,7 +121,7 @@ std::string hostname()
   return hname;
 }/*}}}*/
 
-void setenv(const std::string a_name,const std::string a_value)
+void setenv(const std::string &a_name,const std::string &a_value)
 {/*{{{*/
 
   // - ERROR -
@@ -131,7 +131,7 @@ void setenv(const std::string a_name,const std::string a_value)
   }
 }/*}}}*/
 
-std::string getenv(const std::string a_name)
+std::string getenv(const std::string &a_name)
 {/*{{{*/
   char *value = ::getenv(a_name.data());
 

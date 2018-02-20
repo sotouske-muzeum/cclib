@@ -77,7 +77,7 @@ void server_callback(cclwebs::connection_c &a_conn)
         void *&user_data = a_conn.user_data();
         if (user_data != nullptr)
         {
-          std::string *string_ptr = static_cast<std::string *>(user_data);
+          auto *string_ptr = static_cast<std::string *>(user_data);
           user_data = nullptr;
 
           a_conn.write("Echo: " + *string_ptr);

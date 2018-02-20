@@ -116,7 +116,7 @@ add_test(cclcurl_test_head cclcurl_test head)
 # - webs tools test -
 add_executable(cclwebs_test tests/cclwebs_test.cc)
 target_link_libraries(cclwebs_test cclsys cclwebs)
-add_test(cclwebs_test_all cclwebs_test all)
+#add_test(cclwebs_test_all cclwebs_test all)
 
 # - crypto tools test -
 add_executable(cclcrypto_test tests/cclcrypto_test.cc)

@@ -36,15 +36,15 @@ int loc_c::compare_value(const loc_c &a_loc) const
   case type_bool:
   case type_integer:
     {/*{{{*/
-      int64_t first = static_cast<int64_t>(m_data_ptr);
-      int64_t second = static_cast<int64_t>(a_loc.m_data_ptr);
+      auto first = static_cast<int64_t>(m_data_ptr);
+      auto second = static_cast<int64_t>(a_loc.m_data_ptr);
 
       return first < second ? -1 : (first > second ? 1 : 0);
     }/*}}}*/
   case type_float:
     {/*{{{*/
-      double first = static_cast<double>(m_data_ptr);
-      double second = static_cast<double>(a_loc.m_data_ptr);
+      auto first = static_cast<double>(m_data_ptr);
+      auto second = static_cast<double>(a_loc.m_data_ptr);
 
       return first < second ? -1 : (first > second ? 1 : 0);
     }/*}}}*/
