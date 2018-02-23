@@ -15,6 +15,9 @@
 
 namespace cclxml {
 
+// - exceptions list -
+const std::string error_XML_DATA_PARSE_ERROR = "error while parsing xml data";
+
 class xml_attr_c
 {/*{{{*/
   private:
@@ -49,6 +52,7 @@ class xml_node_c
   std::vector<xml_node_c> m_nodes;
 
   void attr(const std::string &a_name,const std::string &a_value);
+  void text(const std::string &a_text);
 
   public:
   explicit xml_node_c(std::string a_name,std::string a_text = "",bool a_self_close = true) :
@@ -74,12 +78,15 @@ class xml_node_c
   }/*}}}*/
 
   xml_node_c &node(const std::string &a_name,const std::string &a_text = "",bool a_self_close = true);
-
   xml_node_c &move_node(xml_node_c &&a_node) throw();
-
   xml_node_c &attr_(const std::string &a_name,const std::string &a_value)
   {/*{{{*/
     attr(a_name,a_value);
+    return *this;
+  }/*}}}*/
+  xml_node_c &text_(const std::string &a_text)
+  {/*{{{*/
+    text(a_text);
     return *this;
   }/*}}}*/
 
@@ -90,6 +97,37 @@ class xml_node_c
   xml_node_c &span() { return node("span","",false); }
 
   friend std::ostream &operator << (std::ostream &a_out,const xml_node_c &a_this);
+};/*}}}*/
+
+class xml_parser_c
+{/*{{{*/
+  private:
+  typedef std::vector<xml_node_c *> node_stack_t;
+
+  node_stack_t node_stack;
+
+  static void xml_start_document(void *user);
+  static void xml_end_document(void *user);
+  static void xml_start_element(void *user,const xmlChar *name,const xmlChar **attrs);
+  static void xml_end_element(void *user,const xmlChar *name);
+  static void xml_characters(void *user,const xmlChar *ch,int len);
+
+  static void xml_warning(void *user,const char *msg,...);
+  static void xml_error(void *user,const char *msg,...);
+  static void xml_fatal_error(void *user,const char *msg,...);
+
+  explicit xml_parser_c() = default;
+  ~xml_parser_c();
+
+  public:
+  static xml_node_c parse(const std::string &a_data);
+};/*}}}*/
+
+class cclxml_c
+{/*{{{*/
+  public:
+  cclxml_c() throw();
+  ~cclxml_c();
 };/*}}}*/
 
 } // namespace cclxml

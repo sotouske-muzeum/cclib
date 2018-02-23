@@ -397,11 +397,23 @@ bool connection_c::auth_check(
 
 post_proc_c *connection_c::new_post_proc(const std::string &a_file_name)
 {/*{{{*/
-  return new post_proc_c(m_conn_ptr,a_file_name);
+  size_t total_size = 0;
+
+  // - retrieve headers -
+  auto headers = this->values(MHD_HEADER_KIND);
+
+  // - retrieve content length -
+  auto header_i = headers.find("Content-Length");
+  if (header_i != headers.end())
+  {
+    total_size = strtoll(header_i->second.data(),nullptr,10);
+  }
+
+  return new post_proc_c(m_conn_ptr,a_file_name,total_size);
 }/*}}}*/
 
-post_proc_c::post_proc_c(MHD_Connection *a_conn_ptr,const std::string &a_file_name) :
-m_post_proc{nullptr},m_total_size{0},m_upload_size{0},m_file{nullptr}
+post_proc_c::post_proc_c(MHD_Connection *a_conn_ptr,const std::string &a_file_name,size_t a_total_size) :
+m_post_proc{nullptr},m_total_size{a_total_size},m_upload_size{0},m_file{nullptr}
 {/*{{{*/
 
   // - if file name is not empty -
@@ -430,23 +442,13 @@ int post_proc_c::post_callback(const char *key,const char *data,size_t size)
 {/*{{{*/
   
   // - process file data -
-  if (strcmp(key,"file") == 0)
+  if (strcmp(key,"file") == 0 && size > 0)
   {
-    // - update upload size -
-    m_upload_size += size;
-
     // - ERROR -
     if (fwrite(data,size,1,m_file) != 1)
     {
       cclthrow(error_POST_PROC_FILE_WRITE_ERROR);
     }
-  }
-
-  // - process file size -
-  else if (strcmp(key,"size") == 0)
-  {
-    // - retrieve total size -
-    m_total_size = strtoll(data,nullptr,10);
   }
   else
   {
@@ -473,6 +475,9 @@ void post_proc_c::process(const std::string &a_data)
 {/*{{{*/
   if (m_post_proc != nullptr)
   {
+    // - update upload size -
+    m_upload_size += a_data.size();
+
     MHD_post_process(m_post_proc,a_data.data(),a_data.size());
   }
 }/*}}}*/

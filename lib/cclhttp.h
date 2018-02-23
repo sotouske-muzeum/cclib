@@ -147,7 +147,7 @@ class post_proc_c
   size_t m_upload_size;
   FILE *m_file;
 
-  post_proc_c(MHD_Connection *a_conn_ptr,const std::string &a_file_name);
+  post_proc_c(MHD_Connection *a_conn_ptr,const std::string &a_file_name,size_t a_total_size);
   int post_callback(const char *key,const char *data,size_t size);
 
   public:

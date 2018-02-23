@@ -70,10 +70,25 @@ void test_cclxml_generate()
   assert(buffer.str() == ref_xml);
 }/*}}}*/
 
+void test_cclxml_parse_val()
+{/*{{{*/
+  std::string data = cclstr::read_file("../tests/data/cclxml/test.xml");
+  cclxml::xml_node_c node = cclxml::xml_parser_c::parse(data);
+
+  // - generate xml to string -
+  std::stringbuf buffer;
+  std::ostream os(&buffer);
+  os << node;
+
+  // - compare generated and original xml -
+  assert(buffer.str() == data);
+}/*}}}*/
+
 void test_cclxml_all()
 {/*{{{*/
   test_cclxml_parse();
   test_cclxml_generate();
+  test_cclxml_parse_val();
 }/*}}}*/
 
 int main(int argc,char **argv)
@@ -89,6 +104,10 @@ int main(int argc,char **argv)
       else if (std::string("generate") == argv[arg_idx])
       {
         test_cclxml_generate();
+      }
+      else if (std::string("parse_val") == argv[arg_idx])
+      {
+        try { test_cclxml_parse_val(); } catch (...) {}
       }
       else if (std::string("all") == argv[arg_idx])
       {
