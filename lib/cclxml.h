@@ -44,12 +44,15 @@ class xml_attr_c
 
 class xml_node_c
 {/*{{{*/
+  typedef std::vector<xml_attr_c> xml_attrs_t;
+  typedef std::vector<xml_node_c> xml_nodes_t;
+
   private:
   bool m_self_close;
   std::string m_name;
   std::string m_text;
-  std::vector<xml_attr_c> m_attrs;
-  std::vector<xml_node_c> m_nodes;
+  xml_attrs_t m_attrs;
+  xml_nodes_t m_nodes;
 
   void attr(const std::string &a_name,const std::string &a_value);
   void text(const std::string &a_text);
@@ -95,6 +98,11 @@ class xml_node_c
   xml_node_c &td() { return node("td","",false); }
   xml_node_c &div() { return node("div","",false); }
   xml_node_c &span() { return node("span","",false); }
+
+  const std::string &name() const { return m_name; }
+  const std::string &text() const { return m_text; }
+  const xml_attrs_t &attrs() const { return m_attrs; }
+  const xml_nodes_t &nodes() const { return m_nodes; }
 
   friend std::ostream &operator << (std::ostream &a_out,const xml_node_c &a_this);
 };/*}}}*/
