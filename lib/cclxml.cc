@@ -106,7 +106,7 @@ void xml_parser_c::xml_start_element(void *user,const xmlChar *name,const xmlCha
 
   if (attrs != nullptr)
   {
-    const char **attr_ptr = reinterpret_cast<const char **>(attrs);
+    auto attr_ptr = reinterpret_cast<const char **>(attrs);
     while (*attr_ptr != nullptr)
     {
       node->attr_(attr_ptr[0],attr_ptr[1]);

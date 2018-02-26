@@ -276,6 +276,30 @@ connection_c::string_map_t connection_c::values(enum MHD_ValueKind a_kind)
   return values_map;
 }/*}}}*/
 
+size_t connection_c::content_length()
+{/*{{{*/
+  size_t length = 0;
+
+  const char *length_str = MHD_lookup_connection_value(m_conn_ptr,MHD_HEADER_KIND,"Content-Length");
+
+  // - ERROR -
+  if (length_str == nullptr)
+  {
+    return 0;
+  }
+
+  char *end_ptr;
+  length = strtoll(length_str,&end_ptr,10);
+
+  // - ERROR -
+  if (*end_ptr != '\0')
+  {
+    return 0;
+  }
+
+  return length;
+}/*}}}*/
+
 connection_c &connection_c::queue_response(unsigned a_status,const response_c &a_resp)
 {/*{{{*/
 
@@ -395,21 +419,9 @@ bool connection_c::auth_check(
   return !((a_reason == MHD_INVALID_NONCE) || (a_reason == MHD_NO));
 }/*}}}*/
 
-post_proc_c *connection_c::new_post_proc(const std::string &a_file_name)
+post_proc_c *connection_c::new_post_proc(const std::string &a_file_name,size_t a_total_size)
 {/*{{{*/
-  size_t total_size = 0;
-
-  // - retrieve headers -
-  auto headers = this->values(MHD_HEADER_KIND);
-
-  // - retrieve content length -
-  auto header_i = headers.find("Content-Length");
-  if (header_i != headers.end())
-  {
-    total_size = strtoll(header_i->second.data(),nullptr,10);
-  }
-
-  return new post_proc_c(m_conn_ptr,a_file_name,total_size);
+  return new post_proc_c(m_conn_ptr,a_file_name,a_total_size);
 }/*}}}*/
 
 post_proc_c::post_proc_c(MHD_Connection *a_conn_ptr,const std::string &a_file_name,size_t a_total_size) :

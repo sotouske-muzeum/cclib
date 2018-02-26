@@ -110,6 +110,7 @@ class connection_c
   void *&user_data() { return m_user_data; }
   connection_c &values(enum MHD_ValueKind a_kind,string_map_t &a_values_map);
   string_map_t values(enum MHD_ValueKind a_kind);
+  size_t content_length();
   connection_c &queue_response(unsigned a_status,const response_c &a_resp);
 
   connection_c &queue_basic_auth_fail_response(
@@ -134,7 +135,7 @@ class connection_c
       unsigned a_nonce_timeout,
       int &a_reason);
 
-  post_proc_c *new_post_proc(const std::string &a_file_name);
+  post_proc_c *new_post_proc(const std::string &a_file_name,size_t a_total_size);
 };/*}}}*/
 
 class post_proc_c
