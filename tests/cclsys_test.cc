@@ -50,7 +50,7 @@ void test_cclsys_poll()
   //std::cout << poll << std::endl;
   poll.remove(-2);
 
-  int fd = open("../tests/data/cclsys/track.gpx",O_RDONLY);
+  int fd = open(CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx",O_RDONLY);
   poll.insert(fd,POLLIN | POLLPRI);
 
   ssize_t byte_cnt = 0;
@@ -102,7 +102,7 @@ void test_cclsys_pid()
   {
     std::vector<cclsys::pid_c> pids;
     pids.emplace_back(strings_t{"ls","-l"});
-    pids.emplace_back(strings_t{"grep","-q","60.21057","../tests/data/cclsys/track.gpx"});
+    pids.emplace_back(strings_t{"grep","-q","60.21057",CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx"});
 
     cclsys::sleep(100);
   }
@@ -165,13 +165,13 @@ void test_cclsys_pipe()
 
   cclsys::pipe_c{"cat","w"}.write("Hello world\n").close();
 
-  std::string ref_str(cclstr::read_file("../tests/data/cclsys/track.gpx"));
+  std::string ref_str(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx"));
 
-  cclsys::pipe_c pipe3{"cat ../tests/data/cclsys/track.gpx","r"};
+  cclsys::pipe_c pipe3{"cat " CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx","r"};
   assert(pipe3.read() == ref_str);
 
   // - read lines from pipe -
-  cclsys::pipe_c pipe4{"cat ../tests/data/cclsys/track.gpx","r"};
+  cclsys::pipe_c pipe4{"cat " CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx","r"};
   std::vector<std::string> lines;
   do {
     lines.emplace_back(std::string());
@@ -183,32 +183,32 @@ void test_cclsys_pipe()
   pipe4.close();
   assert(cclstr::join(lines,"\n") == ref_str);
 
-  cclsys::pipe_c pipe5{"cat ../tests/data/cclsys/track.gpx","r"};
+  cclsys::pipe_c pipe5{"cat " CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx","r"};
   assert(pipe5.read(20) == "<?xml version=\"1.0\" ");
   pipe5.read();
 
-  assert((cclsys::pipe_c{"cat ../tests/data/cclsys/track.gpx","r"}.read_close()) ==
+  assert((cclsys::pipe_c{"cat " CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx","r"}.read_close()) ==
       ref_str);
 }/*}}}*/
 
 void test_cclsys_file()
 {/*{{{*/
-  cclsys::file_c file{"../tests/data/cclsys/track.gpx","r"};
+  cclsys::file_c file{CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx","r"};
   file.seek(256,SEEK_SET);
   assert(file.tell() == 256);
   file.close();
 
-  std::string ref_str(cclsys::file_c("../tests/data/cclsys/track.gpx","r").read_close());
+  std::string ref_str(cclsys::file_c(CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx","r").read_close());
 
-  cclsys::file_c file1{"Testing/Temporary/track.gpx","w"};
+  cclsys::file_c file1{CMAKE_BUILD_DIR "/Testing/Temporary/track.gpx","w"};
   file1.write(ref_str);
   file1.close();
-  assert(std::system("diff Testing/Temporary/track.gpx ../tests/data/cclsys/track.gpx") == 0);
+  assert(std::system("diff " CMAKE_BUILD_DIR "/Testing/Temporary/track.gpx " CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx") == 0);
 
-  cclsys::file_c{"Testing/Temporary/track.gpx","w"}.write(ref_str).close();
-  assert(std::system("diff Testing/Temporary/track.gpx ../tests/data/cclsys/track.gpx") == 0);
+  cclsys::file_c{CMAKE_BUILD_DIR "/Testing/Temporary/track.gpx","w"}.write(ref_str).close();
+  assert(std::system("diff " CMAKE_BUILD_DIR "/Testing/Temporary/track.gpx " CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx") == 0);
 
-  assert(cclsys::file_size("../tests/data/cclsys/track.gpx") == 116403);
+  assert(cclsys::file_size(CMAKE_CCLIB_DIR "/tests/data/cclsys/track.gpx") == 116403);
 }/*}}}*/
 
 void test_cclsys_hostname()

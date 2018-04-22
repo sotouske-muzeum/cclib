@@ -21,6 +21,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CCLIB_LIB_MODE STATIC) # [STATIC | SHARED | MODULE]
 
+add_definitions("'-DCMAKE_BUILD_DIR=\"${CMAKE_CURRENT_BINARY_DIR}\"'")
+add_definitions("'-DCMAKE_CCLIB_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\"'")
+
 # - add ccl libraries -
 add_library(cclstr ${CCLIB_LIB_MODE} lib/cclstr.cc)
 add_library(cclvar ${CCLIB_LIB_MODE} lib/cclvar.cc)

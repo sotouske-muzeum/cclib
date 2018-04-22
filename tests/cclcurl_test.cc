@@ -29,7 +29,7 @@ void test_cclcurl_get()
 
   // - read reference file -
   auto res(cclcurl::GET("127.0.0.1:8888/file"));
-  auto ref_file(cclstr::read_file("../tests/data/cclcurl/track.gpx"));
+  auto ref_file(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclcurl/track.gpx"));
   assert(res.data() == ref_file);
 
   std::cout << "res.info_string(CURLINFO_EFFECTIVE_URL): " << res.info_string(CURLINFO_EFFECTIVE_URL) << std::endl;
@@ -52,10 +52,10 @@ void test_cclcurl_put()
   } while(--count > 0);
 
   // - read upload file -
-  auto upload_file(cclstr::read_file("../tests/data/cclcurl/track.gpx"));
+  auto upload_file(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclcurl/track.gpx"));
   auto res(cclcurl::PUT("127.0.0.1:8888/file",upload_file));
   assert(res.data() == "<html><body>OK</body></html>");
-  assert(std::system("diff Testing/Temporary/data.txt ../tests/data/cclcurl/track.gpx") == 0);
+  assert(std::system("diff " CMAKE_BUILD_DIR "/Testing/Temporary/data.txt " CMAKE_CCLIB_DIR "/tests/data/cclcurl/track.gpx") == 0);
 
   std::cout << "res.info_string(CURLINFO_EFFECTIVE_URL): " << res.info_string(CURLINFO_EFFECTIVE_URL) << std::endl;
   std::cout << "res.info_long(CURLINFO_RESPONSE_CODE): " << res.info_long(CURLINFO_RESPONSE_CODE) << std::endl;

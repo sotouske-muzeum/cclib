@@ -34,7 +34,7 @@ void test_cclxml_parse()
   xmlSetGenericErrorFunc(nullptr,error);
   xmlSetStructuredErrorFunc(nullptr,struct_error);
 
-  xmlDocPtr doc = xmlParseFile("../tests/data/cclxml/track.gpx");
+  xmlDocPtr doc = xmlParseFile(CMAKE_CCLIB_DIR "/tests/data/cclxml/track.gpx");
   xmlNode *root_element = xmlDocGetRootElement(doc);
 
   print_element_names(root_element);
@@ -64,7 +64,7 @@ void test_cclxml_generate()
 
   // - read reference xml from file -
   std::string ref_xml;
-  assert(cclstr::read_file("../tests/data/cclxml/generated.xml",ref_xml));
+  assert(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclxml/generated.xml",ref_xml));
 
   // - compare generated and reference xml -
   assert(buffer.str() == ref_xml);
@@ -72,7 +72,7 @@ void test_cclxml_generate()
 
 void test_cclxml_parse_val()
 {/*{{{*/
-  std::string data = cclstr::read_file("../tests/data/cclxml/test.xml");
+  std::string data = cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclxml/test.xml");
   cclxml::xml_node_c node = cclxml::xml_parser_c::parse(data);
 
   // - generate xml to string -

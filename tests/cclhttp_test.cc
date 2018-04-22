@@ -38,7 +38,7 @@ void server_connection(cclhttp::connection_c &a_conn)
 
     if (a_conn.url() == "/file")
     {
-      cclhttp::response_c resp{"../tests/data/cclhttp/track.gpx",cclhttp::c_resp_from_file};
+      cclhttp::response_c resp{CMAKE_CCLIB_DIR "/tests/data/cclhttp/track.gpx",cclhttp::c_resp_from_file};
       resp.add_header("Content-Type","text/xml");
       a_conn.queue_response(MHD_HTTP_OK,resp);
     }
@@ -79,7 +79,7 @@ void server_connection(cclhttp::connection_c &a_conn)
     {
       // - write string buffer to file -
       std::string data = buff_ptr->str();
-      std::ofstream out_stream("Testing/Temporary/data.txt",std::ofstream::out);
+      std::ofstream out_stream(CMAKE_BUILD_DIR "/Testing/Temporary/data.txt",std::ofstream::out);
       out_stream.write(data.data(),data.length());
 
       cclhttp::response_c resp{"<html><body>OK</body></html>",cclhttp::c_resp_from_string};
@@ -233,9 +233,9 @@ void test_cclhttp_all()
     assert(client.wait(0) == 0);
   } while(--count > 0);
 
-  cclsys::pid_c client{strings_t{"wget","http://127.0.0.1:8888/file","-O","Testing/Temporary/track.gpx"}};
+  cclsys::pid_c client{strings_t{"wget","http://127.0.0.1:8888/file","-O",CMAKE_BUILD_DIR "/Testing/Temporary/track.gpx"}};
   assert(client.wait(0) == 0);
-  assert(std::system("diff Testing/Temporary/track.gpx ../tests/data/cclhttp/track.gpx") == 0);
+  assert(std::system("diff " CMAKE_BUILD_DIR "/Testing/Temporary/track.gpx " CMAKE_CCLIB_DIR "/tests/data/cclhttp/track.gpx") == 0);
 
   assert(kill(server.pid(),SIGTERM) == 0);
   assert(server.wait(0) == 0);
@@ -280,18 +280,18 @@ void test_cclhttp_auth_all()
   } while(--count > 0);
 
   {
-    assert(std::system("curl --digest --user jirka:password 127.0.0.1:8888 > Testing/Temporary/auth_granted.html") == 0);
-    assert(std::system("diff Testing/Temporary/auth_granted.html ../tests/data/cclhttp/auth_granted.html") == 0);
+    assert(std::system("curl --digest --user jirka:password 127.0.0.1:8888 > " CMAKE_BUILD_DIR "/Testing/Temporary/auth_granted.html") == 0);
+    assert(std::system("diff " CMAKE_BUILD_DIR "/Testing/Temporary/auth_granted.html " CMAKE_CCLIB_DIR "/tests/data/cclhttp/auth_granted.html") == 0);
   }
 
   {
-    assert(std::system("curl --digest --user logout:logout 127.0.0.1:8888 > Testing/Temporary/auth_denied.html") == 0);
-    assert(std::system("diff Testing/Temporary/auth_denied.html ../tests/data/cclhttp/auth_denied.html") == 0);
+    assert(std::system("curl --digest --user logout:logout 127.0.0.1:8888 > " CMAKE_BUILD_DIR "/Testing/Temporary/auth_denied.html") == 0);
+    assert(std::system("diff " CMAKE_BUILD_DIR "/Testing/Temporary/auth_denied.html " CMAKE_CCLIB_DIR "/tests/data/cclhttp/auth_denied.html") == 0);
   }
 
   // - test by real wget (no busybox) -
   //{
-  //  cclsys::pid_c client{strings_t{"wget","--user=logout","--password=logout","127.0.0.1:8888","-O","Testing/Temporary/auth_denied.html"}};
+  //  cclsys::pid_c client{strings_t{"wget","--user=logout","--password=logout","127.0.0.1:8888","-O",CMAKE_BUILD_DIR "/Testing/Temporary/auth_denied.html"}};
 
   //  int status = client.wait(0);
   //  assert(WEXITSTATUS(status) == 6);

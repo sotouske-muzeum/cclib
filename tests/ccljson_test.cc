@@ -106,11 +106,11 @@ void test_ccljson_parse()
   assert(ccljson::create_nice(ccljson::parse(ref_json_1),"  ") == ref_json_1);
 
   ccljson::parse(ref_json);
-  assert(ccljson::parse(cclstr::read_file("../tests/data/ccljson/data.json")) ==
-         ccljson::parse(cclstr::read_file("../tests/data/ccljson/data1.json")));
+  assert(ccljson::parse(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/ccljson/data.json")) ==
+         ccljson::parse(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/ccljson/data1.json")));
 
-  assert(cclvar::to_string(ccljson::parse(cclstr::read_file("../tests/data/ccljson/data.json"))) ==
-    cclstr::read_file("../tests/data/ccljson/data.txt"));
+  assert(cclvar::to_string(ccljson::parse(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/ccljson/data.json"))) ==
+    cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/ccljson/data.txt"));
 }/*}}}*/
 
 void test_ccljson_all()

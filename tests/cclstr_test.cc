@@ -6,9 +6,9 @@
 void test_cclstr_read_file()
 {/*{{{*/
   std::string string;
-  assert(cclstr::read_file("../tests/data/cclstr/track.gpx",string));
+  assert(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclstr/track.gpx",string));
 
-  string = cclstr::read_file("../tests/data/cclstr/track.gpx");
+  string = cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclstr/track.gpx");
   assert(cclstr::read_file("non-existing") == std::string{});
 }/*}}}*/
 
@@ -33,7 +33,7 @@ void test_cclstr_split()
 
 void test_cclstr_join()
 {/*{{{*/
-  std::string string = cclstr::read_file("../tests/data/cclstr/track.gpx");
+  std::string string = cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclstr/track.gpx");
   auto split = cclstr::split(string,"\n");
   assert(split.size() == 1449);
   assert(cclstr::join(split,"\n") == string);
@@ -47,7 +47,7 @@ void test_cclstr_format()
   std::string string(cclstr::format("Hello: %d %f %s",120,120.55,"String"));
   assert(string.capacity() == 128);
 
-  std::string data(cclstr::read_file("../tests/data/cclstr/track.gpx"));
+  std::string data(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclstr/track.gpx"));
   assert((cclstr::format("Data: %s",data.data())) == ("Data: " + data));
 }/*}}}*/
 
