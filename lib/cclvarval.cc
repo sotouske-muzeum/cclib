@@ -191,7 +191,7 @@ void validator_c::validate_pair(const cclvar::var_c &a_value,const cclvar::var_c
     case prop_size_lesser_equal:
     case prop_size_greater_equal:
     {/*{{{*/
-      size_t value_size;
+      int64_t value_size;
       switch (a_value.type())
       {
       case cclvar::type_string:
@@ -316,7 +316,7 @@ void validator_c::validate_pair(const cclvar::var_c &a_value,const cclvar::var_c
           int64_t index = index_i->first.to_int();
           
           // - ERROR -
-          if (index < 0 || index >= value_arr.size())
+          if (index < 0 || index >= static_cast<int64_t>(value_arr.size()))
           {
             m_value_stack.emplace_back(index_i->first);
             m_props_stack.emplace_back(index_i->first);
@@ -450,7 +450,7 @@ void validator_c::validate_pair(const cclvar::var_c &a_value,const cclvar::var_c
       {
         cclvar::set_t &value_set = a_value.to_set();
 
-        size_t position = 0;
+        int64_t position = 0;
         for (auto item_i = value_set.begin();
                   item_i != value_set.end();
                   ++item_i,++position)
@@ -467,7 +467,7 @@ void validator_c::validate_pair(const cclvar::var_c &a_value,const cclvar::var_c
       {
         cclvar::list_t &value_lst = a_value.to_list();
 
-        size_t position = 0;
+        int64_t position = 0;
         for (auto item_i = value_lst.begin();
                   item_i != value_lst.end();
                   ++item_i,++position)

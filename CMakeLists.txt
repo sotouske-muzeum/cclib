@@ -2,24 +2,49 @@
 cmake_minimum_required(VERSION 3.1.0)
 
 project(cclib)
-#SET(CMAKE_BUILD_TYPE Debug)
-#SET(CMAKE_BUILD_TYPE Release)
-
 enable_testing()
 
 include_directories(tests include lib)
 
+#set(LIBXML2_ENABLE 1)
+#set(LIBHTTP_ENABLE 1)
+#set(LIBCURL_ENABLE 1)
+#set(LIBWEBS_ENABLE 1)
+#set(LIBCRYPTO_ENABLE 1)
+
 find_package(PkgConfig)
-pkg_search_module(LIBXML2 REQUIRED libxml-2.0)
-pkg_search_module(LIBHTTP REQUIRED libmicrohttpd)
-pkg_search_module(LIBCURL REQUIRED libcurl)
-pkg_search_module(LIBWEBS REQUIRED libwebsockets)
-pkg_search_module(LIBCRYPTO REQUIRED libcrypto)
+
+if (LIBXML2_ENABLE)
+  pkg_search_module(LIBXML2 libxml-2.0)
+endif()
+
+if (LIBHTTP_ENABLE)
+  pkg_search_module(LIBHTTP libmicrohttpd)
+endif()
+
+if (LIBCURL_ENABLE)
+  pkg_search_module(LIBCURL libcurl)
+endif()
+
+if (LIBWEBS_ENABLE)
+  pkg_search_module(LIBWEBS libwebsockets)
+endif()
+
+if (LIBCRYPTO_ENABLE)
+  pkg_search_module(LIBCRYPTO libcrypto)
+endif()
+
+set(GCC_COMPILE_FLAGS "-O3 -Wall -Wfatal-errors")
+set(CMAKE_CXX_FLAGS ${GCC_COMPILE_FLAGS})
+set(CMAKE_EXE_LINKER_FLAGS ${GCC_COMPILE_FLAGS})
+
+#SET(CMAKE_BUILD_TYPE Debug)
+#SET(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CCLIB_LIB_MODE STATIC) # [STATIC | SHARED | MODULE]
+set(CCLIB_LIB_MODE SHARED) # [STATIC | SHARED | MODULE]
 
 add_definitions("'-DCMAKE_BUILD_DIR=\"${CMAKE_CURRENT_BINARY_DIR}\"'")
 add_definitions("'-DCMAKE_CCLIB_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\"'")
@@ -37,25 +62,35 @@ target_link_libraries(cclsys rt)
 add_library(ccljson ${CCLIB_LIB_MODE} lib/ccljson.cc lib/ccljson_parse_actions.cc)
 target_link_libraries(ccljson cclvar)
 
-add_library(cclxml ${CCLIB_LIB_MODE} lib/cclxml.cc)
-target_include_directories(cclxml PUBLIC ${LIBXML2_INCLUDE_DIRS})
-target_link_libraries(cclxml ${LIBXML2_LIBRARIES})
+if (LIBXML2_FOUND)
+  add_library(cclxml ${CCLIB_LIB_MODE} lib/cclxml.cc)
+  target_include_directories(cclxml PUBLIC ${LIBXML2_INCLUDE_DIRS})
+  target_link_libraries(cclxml ${LIBXML2_LIBRARIES})
+endif()
 
-add_library(cclhttp ${CCLIB_LIB_MODE} lib/cclhttp.cc)
-target_include_directories(cclhttp PUBLIC ${LIBHTTP_INCLUDE_DIRS})
-target_link_libraries(cclhttp microhttpd)
+if (LIBHTTP_FOUND)
+  add_library(cclhttp ${CCLIB_LIB_MODE} lib/cclhttp.cc)
+  target_include_directories(cclhttp PUBLIC ${LIBHTTP_INCLUDE_DIRS})
+  target_link_libraries(cclhttp microhttpd)
+endif()
 
-add_library(cclcurl ${CCLIB_LIB_MODE} lib/cclcurl.cc)
-target_include_directories(cclcurl PUBLIC ${LIBCURL_INCLUDE_DIRS})
-target_link_libraries(cclcurl ${LIBCURL_LIBRARIES})
+if (LIBCURL_FOUND)
+  add_library(cclcurl ${CCLIB_LIB_MODE} lib/cclcurl.cc)
+  target_include_directories(cclcurl PUBLIC ${LIBCURL_INCLUDE_DIRS})
+  target_link_libraries(cclcurl ${LIBCURL_LIBRARIES})
+endif()
 
-add_library(cclwebs ${CCLIB_LIB_MODE} lib/cclwebs.cc)
-target_include_directories(cclwebs PUBLIC ${LIBWEBS_INCLUDE_DIRS})
-target_link_libraries(cclwebs ${LIBWEBS_LIBRARIES})
+if (LIBWEBS_FOUND)
+  add_library(cclwebs ${CCLIB_LIB_MODE} lib/cclwebs.cc)
+  target_include_directories(cclwebs PUBLIC ${LIBWEBS_INCLUDE_DIRS})
+  target_link_libraries(cclwebs ${LIBWEBS_LIBRARIES})
+endif()
 
-add_library(cclcrypto ${CCLIB_LIB_MODE} lib/cclcrypto.cc)
-target_include_directories(cclcrypto PUBLIC ${LIBCRYPTO_INCLUDE_DIRS})
-target_link_libraries(cclcrypto ${LIBCRYPTO_LIBRARIES})
+if (LIBCRYPTO_FOUND)
+  add_library(cclcrypto ${CCLIB_LIB_MODE} lib/cclcrypto.cc)
+  target_include_directories(cclcrypto PUBLIC ${LIBCRYPTO_INCLUDE_DIRS})
+  target_link_libraries(cclcrypto ${LIBCRYPTO_LIBRARIES})
+endif()
 
 # - string tools test -
 add_executable(cclstr_test tests/cclstr_test.cc)
@@ -97,36 +132,42 @@ add_test(ccljson_test_create ccljson_test create)
 add_test(ccljson_test_parse ccljson_test parse)
 
 # - xml tools test -
-add_executable(cclxml_test tests/cclxml_test.cc)
-target_link_libraries(cclxml_test cclstr cclxml)
-add_test(cclxml_test_parse cclxml_test parse)
-add_test(cclxml_test_generate cclxml_test generate)
+if (LIBXML2_FOUND)
+  add_executable(cclxml_test tests/cclxml_test.cc)
+  target_link_libraries(cclxml_test cclstr cclxml)
+  add_test(cclxml_test_parse cclxml_test parse)
+  add_test(cclxml_test_generate cclxml_test generate)
+endif()
 
 # - http tools test -
-add_executable(cclhttp_test tests/cclhttp_test.cc)
-target_link_libraries(cclhttp_test cclsys cclhttp)
-add_test(cclhttp_test_all cclhttp_test all)
-add_test(cclhttp_test_auth_all cclhttp_test auth_all)
+if (LIBHTTP_FOUND)
+  add_executable(cclhttp_test tests/cclhttp_test.cc)
+  target_link_libraries(cclhttp_test cclsys cclhttp)
+  add_test(cclhttp_test_all cclhttp_test all)
+  add_test(cclhttp_test_auth_all cclhttp_test auth_all)
+endif()
 
 # - curl tools test -
-add_executable(cclcurl_test tests/cclcurl_test.cc)
-target_link_libraries(cclcurl_test cclstr cclsys cclhttp cclcurl)
-add_test(cclcurl_test_get cclcurl_test get)
-add_test(cclcurl_test_put cclcurl_test put)
-add_test(cclcurl_test_delete cclcurl_test delete)
-add_test(cclcurl_test_head cclcurl_test head)
+if (LIBCURL_FOUND AND LIBHTTP_FOUND)
+  add_executable(cclcurl_test tests/cclcurl_test.cc)
+  target_link_libraries(cclcurl_test cclstr cclsys cclhttp cclcurl)
+  add_test(cclcurl_test_get cclcurl_test get)
+  add_test(cclcurl_test_put cclcurl_test put)
+  add_test(cclcurl_test_delete cclcurl_test delete)
+  add_test(cclcurl_test_head cclcurl_test head)
+endif()
 
 # - webs tools test -
-add_executable(cclwebs_test tests/cclwebs_test.cc)
-target_link_libraries(cclwebs_test cclsys cclwebs)
-#add_test(cclwebs_test_all cclwebs_test all)
+if (LIBWEBS_FOUND)
+  add_executable(cclwebs_test tests/cclwebs_test.cc)
+  target_link_libraries(cclwebs_test cclsys cclwebs)
+  #add_test(cclwebs_test_all cclwebs_test all)
+endif()
 
 # - crypto tools test -
-add_executable(cclcrypto_test tests/cclcrypto_test.cc)
-target_link_libraries(cclcrypto_test cclsys cclcrypto)
-add_test(cclcrypto_test_all cclcrypto_test all)
-
-add_definitions(-O3 -Wall -Wfatal-errors -DMINT_DEVEL_PC)
-#add_definitions(-g -Wall -Wfatal-errors -DMINT_DEVEL_PC)
-#add_definitions(-Wall -Wfatal-errors -DMINT_DEVEL_PC)
+if (LIBCRYPTO_FOUND)
+  add_executable(cclcrypto_test tests/cclcrypto_test.cc)
+  target_link_libraries(cclcrypto_test cclsys cclcrypto)
+  add_test(cclcrypto_test_all cclcrypto_test all)
+endif()
 
