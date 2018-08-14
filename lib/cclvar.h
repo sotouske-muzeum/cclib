@@ -122,8 +122,20 @@ class loc_c
   var_c &operator [] (int64_t a_idx) const;
   var_c &operator [] (const var_c &a_key) const;
 
+  var_c keys() const;
+
   bool has_idx(int64_t a_idx,var_c &a_value) const;
   bool has_key(const var_c &a_key,var_c &a_value) const;
+
+  std::string to_string()
+  {/*{{{*/
+    std::stringbuf strbuf;
+    std::ostream os(&strbuf);
+    os << *this;
+    return strbuf.str();
+  }/*}}}*/
+
+  std::string to_string(const std::string &a_separator);
 
   friend std::ostream &operator << (std::ostream &a_os,const loc_c &a_loc);
 };/*}}}*/
@@ -186,14 +198,19 @@ class var_c
   var_c &operator [] (int64_t a_idx) const { return (*m_loc_ptr)[a_idx]; }
   var_c &operator [] (const var_c &a_key) const { return (*m_loc_ptr)[a_key]; }
 
+  var_c keys() const { return m_loc_ptr->keys(); }
+
   bool has_idx(int64_t a_idx,var_c &a_value) const
   {/*{{{*/
-    return (*m_loc_ptr).has_idx(a_idx,a_value);
+    return m_loc_ptr->has_idx(a_idx,a_value);
   }/*}}}*/
   bool has_key(const var_c &a_key,var_c &a_value) const
   {/*{{{*/
-    return (*m_loc_ptr).has_key(a_key,a_value);
+    return m_loc_ptr->has_key(a_key,a_value);
   }/*}}}*/
+
+  std::string to_string() { return m_loc_ptr->to_string(); }
+  std::string to_string(const std::string &a_separator) { return m_loc_ptr->to_string(a_separator); }
 
   friend std::ostream &operator << (std::ostream &a_os,const var_c &a_var)
   {/*{{{*/

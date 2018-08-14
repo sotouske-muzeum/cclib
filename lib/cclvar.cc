@@ -284,7 +284,6 @@ var_c &loc_c::operator [] (int64_t a_idx) const
 
   // - ERROR -
   default:
-
     cclthrow(error_INVALID_OPERATION_ON_VARIABLE);
   }
 }/*}}}*/
@@ -314,9 +313,31 @@ var_c &loc_c::operator [] (const var_c &a_key) const
 
   // - ERROR -
   default:
-
     cclthrow(error_INVALID_OPERATION_ON_VARIABLE);
   }
+}/*}}}*/
+
+var_c loc_c::keys() const
+{/*{{{*/
+
+  // - ERROR -
+  if (m_type != type_dict)
+  {
+    cclthrow(error_INVALID_OPERATION_ON_VARIABLE);
+  }
+
+  var_c res_value{array_t{}};
+  auto &res_array = res_value.to_array();
+
+  auto &dict = *static_cast<dict_t *>(m_data_ptr);
+  for (auto pair_i = dict.begin();
+            pair_i != dict.end();
+          ++pair_i)
+  {
+    res_array.push_back(pair_i->first);
+  }
+
+  return res_value;
 }/*}}}*/
 
 bool loc_c::has_idx(int64_t a_idx,var_c &a_value) const
@@ -355,6 +376,74 @@ bool loc_c::has_key(const var_c &a_key,var_c &a_value) const
   {
     return false;
   }
+}/*}}}*/
+
+std::string loc_c::to_string(const std::string &a_separator)
+{/*{{{*/
+  std::stringbuf strbuf;
+  std::ostream os(&strbuf);
+
+  switch (m_type)
+  {
+  case type_array:
+    {/*{{{*/
+      bool first = true;
+      auto &array = *static_cast<array_t *>(m_data_ptr);
+      for (auto var_i = array.begin();
+                var_i != array.end();
+              ++var_i)
+      {
+        os << (first ? "" : a_separator.data()) << *var_i;
+        first = false;
+      }
+    }/*}}}*/
+    break;
+  case type_list:
+    {/*{{{*/
+      bool first = true;
+      auto &list = *static_cast<list_t *>(m_data_ptr);
+      for (auto var_i = list.begin();
+                var_i != list.end();
+              ++var_i)
+      {
+        os << (first ? "" : a_separator.data()) << *var_i;
+        first = false;
+      }
+    }/*}}}*/
+    break;
+  case type_set:
+    {/*{{{*/
+      bool first = true;
+      auto &set = *static_cast<set_t *>(m_data_ptr);
+      for (auto var_i = set.begin();
+                var_i != set.end();
+              ++var_i)
+      {
+        os << (first ? "" : a_separator.data()) << *var_i;
+        first = false;
+      }
+    }/*}}}*/
+    break;
+  case type_dict:
+    {/*{{{*/
+      bool first = true;
+      auto &dict = *static_cast<dict_t *>(m_data_ptr);
+      for (auto pair_i = dict.begin();
+                pair_i != dict.end();
+              ++pair_i)
+      {
+        os << (first ? "" : a_separator.data()) << pair_i->first << ':' << pair_i->second;
+        first = false;
+      }
+    }/*}}}*/
+    break;
+
+  // - ERROR -
+  default:
+    cclthrow(error_INVALID_OPERATION_ON_VARIABLE);
+  }
+
+  return strbuf.str();
 }/*}}}*/
 
 std::ostream &operator << (std::ostream &a_os,const loc_c &a_loc)
