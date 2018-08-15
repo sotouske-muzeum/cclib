@@ -460,6 +460,11 @@ std::ostream &operator << (std::ostream &a_os,const loc_c &a_loc)
     a_os << static_cast<int64_t>(a_loc.m_data_ptr);
     break;
   case type_float:
+
+    // - configure stream to show floating point -
+    a_os.setf(std::ios::fixed,std::ios::floatfield);
+    a_os.precision(6);
+
     a_os << static_cast<double>(a_loc.m_data_ptr);
     break;
   case type_string:

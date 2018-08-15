@@ -100,7 +100,7 @@ void test_ccljson_parse()
 "}"
   };/*}}}*/
 
-  const std::string ref_str_1 = "[friends:[[age:32,height:127.09,male:true,name:Peter,surname:Carlson],[age:28,height:7.09,male:<blank>,name:Mike,surname:Olsen],[age:16,height:121.09,male:false,name:Luke,surname:Johanson]]]";
+  const std::string ref_str_1 = "[friends:[[age:32,height:127.090000,male:true,name:Peter,surname:Carlson],[age:28,height:7.090000,male:<blank>,name:Mike,surname:Olsen],[age:16,height:121.090000,male:false,name:Luke,surname:Johanson]]]";
 
   assert(cclvar::to_string(ccljson::parse(ref_json_1)) == ref_str_1);
   assert(ccljson::create_nice(ccljson::parse(ref_json_1),"  ") == ref_json_1);

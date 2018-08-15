@@ -9,7 +9,7 @@ void test_cclstr_read_file()
   assert(cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclstr/track.gpx",string));
 
   string = cclstr::read_file(CMAKE_CCLIB_DIR "/tests/data/cclstr/track.gpx");
-  assert(cclstr::read_file("non-existing") == std::string{});
+  assert(cclstr::read_file("non-existing").empty());
 }/*}}}*/
 
 void test_cclstr_split()

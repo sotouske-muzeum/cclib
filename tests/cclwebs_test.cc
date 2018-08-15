@@ -148,7 +148,7 @@ void test_cclwebs_server()
   }};
   std::vector<pollfd> pfds;
 
-  std::cout << "version: " << context.version() << std::endl;
+  std::cout << "version: " << cclwebs::context_c::version() << std::endl;
   std::cout << "protocol_idx: " << context.protocol_idx("dumb-protocol") << std::endl;
 
   do {

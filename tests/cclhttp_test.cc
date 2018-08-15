@@ -71,7 +71,7 @@ void server_connection(cclhttp::connection_c &a_conn)
     }
 
     // - if some data was received -
-    if (data != "")
+    if (!data.empty())
     {
       buff_ptr->sputn(data.data(),data.length());
     }
@@ -161,7 +161,7 @@ void auth_server_callback(cclhttp::connection_c &a_conn)
     const std::string opaque = "some-random-hash";
 
     std::string user = a_conn.auth_username();
-    if (user != "")
+    if (!user.empty())
     {
       // - test output -
       {

@@ -9,12 +9,14 @@ DISABLED_CHECKS="\
 ,-modernize-use-using\
 ,-modernize-loop-convert\
 ,-modernize-raw-string-literal\
+,-modernize-use-noexcept\
 ,-google-runtime-references\
 ,-llvm-header-guard\
 ,-llvm-include-order\
 ,-misc-noexcept-move-constructor\
 ,-cert-err58-cpp\
 ,-cert-env33-c\
+,-performance-noexcept-move-constructor\
 "
 
 # - clang tidy all checks -

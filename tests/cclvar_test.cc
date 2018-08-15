@@ -187,10 +187,10 @@ void test_cclvar_array()
   assert(array_0.type() == cclvar::type_array);
   buffer.str({});
   os << array_0;
-  assert(buffer.str() == "[1,2.5,Hello,[1,2,3],5]");
+  assert(buffer.str() == "[1,2.500000,Hello,[1,2,3],5]");
 
-  assert(array_0.to_string() == "[1,2.5,Hello,[1,2,3],5]");
-  assert(array_0.to_string("+") == "1+2.5+Hello+[1,2,3]+5");
+  assert(array_0.to_string() == "[1,2.500000,Hello,[1,2,3],5]");
+  assert(array_0.to_string("+") == "1+2.500000+Hello+[1,2,3]+5");
 
   assert(array_0[0].to_int() == 1);
   assert(array_0[1].to_float() == 2.5);
@@ -204,7 +204,7 @@ void test_cclvar_array()
   array_0[3] = var_c();
   buffer.str({});
   os << array_0;
-  assert(buffer.str() == "[1,2.5,Hello,<blank>,5]");
+  assert(buffer.str() == "[1,2.500000,Hello,<blank>,5]");
 
   int idx = 0;
   auto &array_ref = array_0.to_array();
@@ -248,10 +248,10 @@ void test_cclvar_list()
   assert(list_0.type() == cclvar::type_list);
   buffer.str({});
   os << list_0;
-  assert(buffer.str() == "[1,2.5,Hello,[1,2,3],5]");
+  assert(buffer.str() == "[1,2.500000,Hello,[1,2,3],5]");
 
-  assert(list_0.to_string() == "[1,2.5,Hello,[1,2,3],5]");
-  assert(list_0.to_string("+") == "1+2.5+Hello+[1,2,3]+5");
+  assert(list_0.to_string() == "[1,2.500000,Hello,[1,2,3],5]");
+  assert(list_0.to_string("+") == "1+2.500000+Hello+[1,2,3]+5");
 
   buffer.str({});
   list_t &list_ref = list_0.to_list();
@@ -260,7 +260,7 @@ void test_cclvar_list()
   os << list_ref.back() << ','; list_ref.pop_back();
   os << list_ref.back() << ','; list_ref.pop_back();
   os << list_ref.back() << ','; list_ref.pop_back();
-  assert(buffer.str() == "1,2.5,5,[1,2,3],Hello,");
+  assert(buffer.str() == "1,2.500000,5,[1,2,3],Hello,");
 
   list_ref.push_front(1);
   list_ref.push_front(2);
@@ -313,10 +313,10 @@ void test_cclvar_set()
   assert(set_0.type() == cclvar::type_set);
   buffer.str({});
   os << set_0;
-  assert(buffer.str() == "[1,5,2.5,Hello,[1,2,3]]");
+  assert(buffer.str() == "[1,5,2.500000,Hello,[1,2,3]]");
 
-  assert(set_0.to_string() == "[1,5,2.5,Hello,[1,2,3]]");
-  assert(set_0.to_string("+") == "1+5+2.5+Hello+[1,2,3]");
+  assert(set_0.to_string() == "[1,5,2.500000,Hello,[1,2,3]]");
+  assert(set_0.to_string("+") == "1+5+2.500000+Hello+[1,2,3]");
 
   buffer.str({});
   set_t &set_ref = set_0.to_set();
@@ -325,7 +325,7 @@ void test_cclvar_set()
   set_ref.insert(7);
   set_ref.insert(8);
   os << set_0;
-  assert(buffer.str() == "[1,5,6,7,8,2.5,Hello]");
+  assert(buffer.str() == "[1,5,6,7,8,2.500000,Hello]");
 
   buffer.str({});
   for (auto value_i = set_ref.begin();
@@ -334,7 +334,7 @@ void test_cclvar_set()
   {
     os << *value_i << ',';
   }
-  assert(buffer.str() == "1,5,6,7,8,2.5,Hello,");
+  assert(buffer.str() == "1,5,6,7,8,2.500000,Hello,");
 
   set_0 = set_t{array_t{1,2,3},1,2,3,4};
   var_c set_1 = set_0.copy();
@@ -387,10 +387,10 @@ void test_cclvar_dict()
   assert(dict_0.type() == cclvar::type_dict);
   buffer.str({});
   os << dict_0;
-  assert(buffer.str() == "[Array:[1,2,3,4,5],Blank:<blank>,Bool:true,Dict:[Four:4,One:1,Three:3,Two:2],Double:1.25,Integer:1,String:Hello world]");
+  assert(buffer.str() == "[Array:[1,2,3,4,5],Blank:<blank>,Bool:true,Dict:[Four:4,One:1,Three:3,Two:2],Double:1.250000,Integer:1,String:Hello world]");
 
-  assert(dict_0.to_string() == "[Array:[1,2,3,4,5],Blank:<blank>,Bool:true,Dict:[Four:4,One:1,Three:3,Two:2],Double:1.25,Integer:1,String:Hello world]");
-  assert(dict_0.to_string("+") == "Array:[1,2,3,4,5]+Blank:<blank>+Bool:true+Dict:[Four:4,One:1,Three:3,Two:2]+Double:1.25+Integer:1+String:Hello world");
+  assert(dict_0.to_string() == "[Array:[1,2,3,4,5],Blank:<blank>,Bool:true,Dict:[Four:4,One:1,Three:3,Two:2],Double:1.250000,Integer:1,String:Hello world]");
+  assert(dict_0.to_string("+") == "Array:[1,2,3,4,5]+Blank:<blank>+Bool:true+Dict:[Four:4,One:1,Three:3,Two:2]+Double:1.250000+Integer:1+String:Hello world");
 
   assert(dict_0["Integer"].to_int() == 1);
   assert(dict_0["Double"].to_float() == 1.25);
