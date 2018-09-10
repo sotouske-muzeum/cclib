@@ -501,7 +501,7 @@ uint32_t parser_c::recognize_terminal(uint32_t &a_input_idx)
       goto state_1_label;
     }
 
-   if (in_char >= 9 && in_char < 11) {
+   if (in_char >= 8 && in_char < 14) {
       goto state_15_label;
     }
 
@@ -720,7 +720,7 @@ state_15_label:
    JSON_CLOSE_CHAR(12)
    JSON_GET_NEXT_CHAR();
 
-   if (in_char >= 9 && in_char < 11) {
+   if (in_char >= 8 && in_char < 14) {
       goto state_15_label;
     }
 
